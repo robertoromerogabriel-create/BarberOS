@@ -1,0 +1,1647 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barbería Elite - Gestor de Turnos y Administración</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        gold: {
+                            400: '#FACC15',
+                            500: '#EAB308',
+                            600: '#CA8A04',
+                            700: '#A16207',
+                            accent: '#D4AF37',
+                            hover: '#C5A028'
+                        },
+                        dark: {
+                            900: '#0F0F11',
+                            800: '#18181C',
+                            700: '#222227',
+                            600: '#2D2D35'
+                        }
+                    },
+                    fontFamily: {
+                        serif: ['Cinzel', 'serif'],
+                        sans: ['Plus Jakarta Sans', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #0F0F11;
+            color: #F3F4F6;
+        }
+        .heading-font {
+            font-family: 'Cinzel', serif;
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #18181C;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #374151;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #D4AF37;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-gold-accent selection:text-black">
+
+    <!-- TOP BAR / ROLE SWITCHER -->
+    <header class="bg-dark-800 border-b border-gold-accent/20 sticky top-0 z-50 backdrop-blur-md bg-opacity-90">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <!-- Brand Logo -->
+                <div class="flex items-center space-x-3 cursor-pointer" onclick="switchRole(currentRole)">
+                    <div class="w-12 h-12 rounded-full border-2 border-gold-accent flex items-center justify-center bg-dark-900 shadow-lg shadow-gold-accent/10">
+                        <i class="fa-solid font-bold fa-scissors text-gold-accent text-xl rotate-90"></i>
+                    </div>
+                    <div>
+                        <h1 class="heading-font text-xl sm:text-2xl font-bold tracking-wider text-white">LEGACY <span class="text-gold-accent">BARBER</span></h1>
+                        <p class="text-xs text-gray-400 tracking-widest uppercase">Club & Barbershop</p>
+                    </div>
+                </div>
+
+                <!-- Navigation Tabs & Role Switch -->
+                <div class="flex items-center space-x-2 sm:space-x-4">
+                    <!-- Role Switcher Button -->
+                    <div class="bg-dark-900 p-1 rounded-xl border border-gray-800 flex items-center">
+                        <button id="btn-role-client" onclick="switchRole('client')" class="px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all duration-300 flex items-center space-x-2">
+                            <i class="fa-solid fa-user"></i>
+                            <span class="hidden sm:inline">Modo</span> Cliente
+                        </button>
+                        <button id="btn-role-barber" onclick="switchRole('barber')" class="px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all duration-300 flex items-center space-x-2">
+                            <i class="fa-solid fa-user-tie"></i>
+                            <span class="hidden sm:inline">Modo</span> Barbero
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- NOTIFICATION TOAST -->
+    <div id="toast" class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none">
+        <div class="bg-dark-700 border-l-4 border-gold-accent text-white px-5 py-4 rounded-r shadow-2xl flex items-center space-x-3">
+            <i id="toast-icon" class="fa-solid fa-circle-check text-gold-accent text-xl"></i>
+            <div>
+                <h4 id="toast-title" class="font-bold text-sm">Notificación</h4>
+                <p id="toast-msg" class="text-xs text-gray-300">Mensaje del sistema</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN CONTAINER -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow w-full">
+
+        <!-- ========================================================================= -->
+        <!-- MODO CLIENTE VISTA -->
+        <!-- ========================================================================= -->
+        <section id="view-client" class="space-y-12">
+            <!-- Hero Banner -->
+            <div class="relative rounded-3xl overflow-hidden border border-gray-800 bg-gradient-to-r from-dark-900 via-dark-800 to-dark-900 p-8 sm:p-12 shadow-2xl">
+                <div class="absolute right-0 top-0 h-full w-1/2 opacity-10 pointer-events-none hidden md:block">
+                    <i class="fa-solid fa-scissors text-[280px] text-white -rotate-45 transform translate-x-12 -translate-y-12"></i>
+                </div>
+                <div class="relative z-10 max-w-2xl">
+                    <span class="inline-block px-3 py-1 bg-gold-accent/10 text-gold-accent text-xs font-semibold rounded-full uppercase tracking-widest border border-gold-accent/20 mb-4">Experiencia Premium</span>
+                    <h2 class="heading-font text-3xl sm:text-5xl font-bold text-white leading-tight mb-4">Estilo, Precisión y Elegancia.</h2>
+                    <p class="text-gray-400 text-sm sm:text-base mb-8">Reserva tu turno en línea con nuestros maestros barberos de manera rápida y sin complicaciones.</p>
+                    <div class="flex flex-wrap gap-4">
+                        <a href="#services-section" class="bg-gold-accent hover:bg-gold-hover text-black font-bold px-6 py-3 rounded-xl transition-all shadow-lg shadow-gold-accent/20 flex items-center space-x-2">
+                            <span>Ver Servicios</span>
+                            <i class="fa-solid fa-arrow-down"></i>
+                        </a>
+                        <button onclick="scrollToBooking()" class="bg-dark-700 hover:bg-dark-600 text-white font-semibold px-6 py-3 rounded-xl border border-gray-700 transition-all flex items-center space-x-2">
+                            <i class="fa-solid fa-calendar-check text-gold-accent"></i>
+                            <span>Reservar Turno</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Client Navigation Tabs -->
+            <div class="flex border-b border-gray-800">
+                <button onclick="switchClientTab('booking')" id="tab-btn-booking" class="px-6 py-3 font-semibold text-sm border-b-2 border-gold-accent text-gold-accent flex items-center space-x-2">
+                    <i class="fa-solid fa-calendar-plus"></i>
+                    <span>Reservar Cita</span>
+                </button>
+                <button onclick="switchClientTab('my-appointments')" id="tab-btn-my-appointments" class="px-6 py-3 font-semibold text-sm border-b-2 border-transparent text-gray-400 hover:text-white flex items-center space-x-2">
+                    <i class="fa-solid fa-clock-rotate-left"></i>
+                    <span>Mis Turnos</span>
+                </button>
+            </div>
+
+            <!-- CLIENT TAB: BOOKING -->
+            <div id="client-tab-booking" class="space-y-10">
+                <!-- Catálogo de Servicios -->
+                <div id="services-section">
+                    <div class="mb-6">
+                        <h3 class="heading-font text-2xl font-bold text-white">Nuestros Servicios</h3>
+                        <p class="text-gray-400 text-sm">Selecciona el tratamiento perfecto para tu estilo</p>
+                    </div>
+                    <div id="client-services-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <!-- Rendered dynamically -->
+                    </div>
+                </div>
+
+                <!-- Formulario de Reserva -->
+                <div id="booking-form-card" class="bg-dark-800 rounded-2xl border border-gray-800 p-6 sm:p-8 shadow-xl">
+                    <div class="border-b border-gray-700/50 pb-4 mb-6">
+                        <h3 class="heading-font text-2xl font-bold text-white flex items-center space-x-3">
+                            <i class="fa-solid fa-calendar-day text-gold-accent"></i>
+                            <span>Agendar Tu Cita</span>
+                        </h3>
+                        <p class="text-gray-400 text-sm">Completa tus datos para confirmar la reserva</p>
+                    </div>
+
+                    <form id="appointment-form" onsubmit="handleBookAppointment(event)" class="space-y-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <!-- Datos Personales -->
+                            <div class="space-y-4">
+                                <h4 class="text-xs font-bold text-gold-accent uppercase tracking-wider">1. Tus Datos</h4>
+                                <div>
+                                    <label class="block text-xs text-gray-400 mb-1">Nombre Completo *</label>
+                                    <input type="text" id="book-name" required placeholder="Ej. Juan Pérez" class="w-full bg-dark-900 border border-gray-700 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-gold-accent transition">
+                                </div>
+                                <div>
+                                    <label class="block text-xs text-gray-400 mb-1">Teléfono / WhatsApp *</label>
+                                    <input type="tel" id="book-phone" required placeholder="Ej. 1112345678" class="w-full bg-dark-900 border border-gray-700 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-gold-accent transition">
+                                </div>
+                                <div>
+                                    <label class="block text-xs text-gray-400 mb-1">Correo Electrónico</label>
+                                    <input type="email" id="book-email" placeholder="cliente@ejemplo.com" class="w-full bg-dark-900 border border-gray-700 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-gold-accent transition">
+                                </div>
+                            </div>
+
+                            <!-- Detalles de la Cita -->
+                            <div class="space-y-4">
+                                <h4 class="text-xs font-bold text-gold-accent uppercase tracking-wider">2. Detalles del Servicio</h4>
+                                <div>
+                                    <label class="block text-xs text-gray-400 mb-1">Servicio Seleccionado *</label>
+                                    <select id="book-service" required onchange="updateBookingSummary()" class="w-full bg-dark-900 border border-gray-700 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-gold-accent transition">
+                                        <!-- Rendered dynamically -->
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-xs text-gray-400 mb-1">Barbero de Preferencia *</label>
+                                    <select id="book-barber" required class="w-full bg-dark-900 border border-gray-700 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-gold-accent transition">
+                                        <option value="Dylan Romero">Dylan Romero</option>
+                                        <option value="Tomas Gallardo">Tomas Gallardo</option>
+                                        <option value="Ezequiel Gallardo">Ezequiel Gallardo</option>
+                                        <option value="Leandro Maidana">Leandro Maidana</option>
+                                    </select>
+                                </div>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-xs text-gray-400 mb-1">Fecha *</label>
+                                        <input type="date" id="book-date" required class="w-full bg-dark-900 border border-gray-700 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-gold-accent transition">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs text-gray-400 mb-1">Hora *</label>
+                                        <select id="book-time" required class="w-full bg-dark-900 border border-gray-700 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-gold-accent transition">
+                                            <option value="10:00">10:00 hs</option>
+                                            <option value="11:00">11:00 hs</option>
+                                            <option value="12:00">12:00 hs</option>
+                                            <option value="14:00">14:00 hs</option>
+                                            <option value="15:00">15:00 hs</option>
+                                            <option value="16:00">16:00 hs</option>
+                                            <option value="17:00">17:00 hs</option>
+                                            <option value="18:00">18:00 hs</option>
+                                            <option value="19:00">19:00 hs</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Summary Card -->
+                        <div class="bg-dark-900 border border-gold-accent/20 rounded-xl p-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+                            <div class="flex items-center space-x-3">
+                                <div class="p-3 bg-gold-accent/10 rounded-lg text-gold-accent">
+                                    <i class="fa-solid fa-receipt text-xl"></i>
+                                </div>
+                                <div>
+                                    <p class="text-xs text-gray-400">Total Estimado</p>
+                                    <p id="summary-price" class="text-xl font-bold text-gold-accent">$0.00</p>
+                                </div>
+                            </div>
+                            <button type="submit" class="w-full sm:w-auto bg-gold-accent hover:bg-gold-hover text-black font-bold px-8 py-3 rounded-xl transition shadow-lg shadow-gold-accent/20 flex items-center justify-center space-x-2">
+                                <i class="fa-solid fa-check-circle"></i>
+                                <span>Confirmar Reserva</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- CLIENT TAB: MY APPOINTMENTS -->
+            <div id="client-tab-my-appointments" class="hidden space-y-6">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-dark-800 p-6 rounded-2xl border border-gray-800">
+                    <div>
+                        <h3 class="heading-font text-2xl font-bold text-white">Consultar Citas</h3>
+                        <p class="text-gray-400 text-sm">Ingresa tu número de teléfono registrado para ver tus turnos</p>
+                    </div>
+                    <div class="flex w-full sm:w-auto space-x-2">
+                        <input type="tel" id="client-search-phone" placeholder="Tu número de teléfono" class="bg-dark-900 border border-gray-700 rounded-xl px-4 py-2 text-white text-sm focus:outline-none focus:border-gold-accent">
+                        <button onclick="renderClientAppointments()" class="bg-gold-accent hover:bg-gold-hover text-black px-4 py-2 rounded-xl font-semibold text-sm transition">
+                            Buscar
+                        </button>
+                    </div>
+                </div>
+
+                <div id="client-appointments-list" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Rendered dynamically -->
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================================================= -->
+        <!-- MODO BARBERO / ADMINISTRACIÓN VISTA -->
+        <!-- ========================================================================= -->
+        <section id="view-barber" class="hidden space-y-8">
+            <!-- Header Barber Admin -->
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-dark-800 p-6 rounded-2xl border border-gray-800">
+                <div>
+                    <span class="text-xs font-bold text-gold-accent uppercase tracking-widest">Panel de Control</span>
+                    <h2 class="heading-font text-3xl font-bold text-white">Administración General</h2>
+                </div>
+                <div class="flex flex-wrap items-center gap-3">
+                    <button onclick="openWalkInModal()" class="bg-gold-accent hover:bg-gold-hover text-black font-bold px-4 py-2.5 rounded-xl text-sm transition flex items-center space-x-2">
+                        <i class="fa-solid fa-plus-circle"></i>
+                        <span>Cobro Rápido / Walk-In</span>
+                    </button>
+                    <button onclick="exportReport()" class="bg-dark-700 hover:bg-dark-600 text-white font-semibold px-4 py-2.5 rounded-xl text-sm border border-gray-700 transition flex items-center space-x-2">
+                        <i class="fa-solid fa-download"></i>
+                        <span>Exportar Resumen</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Financial Metrics Dashboard -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Caja del Día -->
+                <div class="bg-dark-800 rounded-2xl p-6 border border-gray-800 relative overflow-hidden">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Caja del Día</p>
+                            <h3 id="stat-daily-revenue" class="text-3xl font-bold text-white mt-1">$0.00</h3>
+                        </div>
+                        <div class="p-3 bg-emerald-500/10 text-emerald-400 rounded-xl">
+                            <i class="fa-solid fa-dollar-sign text-xl"></i>
+                        </div>
+                    </div>
+                    <p id="stat-daily-count" class="text-xs text-gray-400 mt-4"><span class="text-emerald-400 font-bold">0</span> servicios completados hoy</p>
+                </div>
+
+                <!-- Recaudación Mensual -->
+                <div class="bg-dark-800 rounded-2xl p-6 border border-gray-800 relative overflow-hidden">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Caja del Mes</p>
+                            <h3 id="stat-monthly-revenue" class="text-3xl font-bold text-gold-accent mt-1">$0.00</h3>
+                        </div>
+                        <div class="p-3 bg-gold-accent/10 text-gold-accent rounded-xl">
+                            <i class="fa-solid fa-chart-line text-xl"></i>
+                        </div>
+                    </div>
+                    <p id="stat-monthly-count" class="text-xs text-gray-400 mt-4"><span class="text-gold-accent font-bold">0</span> atenciones totales en el mes</p>
+                </div>
+
+                <!-- Clientes Totales -->
+                <div class="bg-dark-800 rounded-2xl p-6 border border-gray-800 relative overflow-hidden">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Clientes Registrados</p>
+                            <h3 id="stat-total-clients" class="text-3xl font-bold text-white mt-1">0</h3>
+                        </div>
+                        <div class="p-3 bg-blue-500/10 text-blue-400 rounded-xl">
+                            <i class="fa-solid fa-users text-xl"></i>
+                        </div>
+                    </div>
+                    <p class="text-xs text-gray-400 mt-4">Base de datos activa</p>
+                </div>
+
+                <!-- Turnos Pendientes -->
+                <div class="bg-dark-800 rounded-2xl p-6 border border-gray-800 relative overflow-hidden">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Turnos Pendientes</p>
+                            <h3 id="stat-pending-appointments" class="text-3xl font-bold text-amber-400 mt-1">0</h3>
+                        </div>
+                        <div class="p-3 bg-amber-500/10 text-amber-400 rounded-xl">
+                            <i class="fa-solid fa-clock text-xl"></i>
+                        </div>
+                    </div>
+                    <p class="text-xs text-gray-400 mt-4">Por atender en la agenda</p>
+                </div>
+            </div>
+
+            <!-- Charts & Breakdown Row -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Payment Method Breakdown -->
+                <div class="bg-dark-800 rounded-2xl p-6 border border-gray-800 flex flex-col justify-between">
+                    <div>
+                        <h3 class="heading-font text-lg font-bold text-white mb-1">Métodos de Pago</h3>
+                        <p class="text-xs text-gray-400 mb-4">Desglose de ingresos por canal</p>
+                    </div>
+                    <div class="h-48 relative flex items-center justify-center">
+                        <canvas id="paymentMethodChart"></canvas>
+                    </div>
+                    <div id="payment-breakdown-list" class="mt-4 space-y-2 text-xs">
+                        <!-- Dynamic list -->
+                    </div>
+                </div>
+
+                <!-- Revenue Chart -->
+                <div class="bg-dark-800 rounded-2xl p-6 border border-gray-800 lg:col-span-2 flex flex-col justify-between">
+                    <div>
+                        <h3 class="heading-font text-lg font-bold text-white mb-1">Balance de Ingresos</h3>
+                        <p class="text-xs text-gray-400 mb-4">Evolución de recaudación reciente</p>
+                    </div>
+                    <div class="h-64">
+                        <canvas id="revenueChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Admin Tabs Navigation -->
+            <div class="flex border-b border-gray-800 overflow-x-auto">
+                <button onclick="switchBarberTab('agenda')" id="barber-tab-btn-agenda" class="px-6 py-3 font-semibold text-sm border-b-2 border-gold-accent text-gold-accent whitespace-nowrap flex items-center space-x-2">
+                    <i class="fa-solid fa-calendar-days"></i>
+                    <span>Agenda y Turnos</span>
+                </button>
+                <button onclick="switchBarberTab('clients')" id="barber-tab-btn-clients" class="px-6 py-3 font-semibold text-sm border-b-2 border-transparent text-gray-400 hover:text-white whitespace-nowrap flex items-center space-x-2">
+                    <i class="fa-solid fa-address-book"></i>
+                    <span>Base de Clientes</span>
+                </button>
+                <button onclick="switchBarberTab('services')" id="barber-tab-btn-services" class="px-6 py-3 font-semibold text-sm border-b-2 border-transparent text-gray-400 hover:text-white whitespace-nowrap flex items-center space-x-2">
+                    <i class="fa-solid fa-list-check"></i>
+                    <span>Gestión de Servicios</span>
+                </button>
+            </div>
+
+            <!-- BARBER TAB 1: AGENDA Y TURNOS -->
+            <div id="barber-tab-agenda" class="space-y-6">
+                <!-- Filters & Search Bar -->
+                <div class="flex flex-col sm:flex-row justify-between items-center gap-4 bg-dark-800 p-4 rounded-xl border border-gray-800">
+                    <div class="flex items-center space-x-3 w-full sm:w-auto">
+                        <input type="date" id="filter-agenda-date" onchange="renderBarberAgenda()" class="bg-dark-900 border border-gray-700 rounded-xl px-3 py-2 text-white text-sm focus:outline-none focus:border-gold-accent">
+                        <select id="filter-agenda-status" onchange="renderBarberAgenda()" class="bg-dark-900 border border-gray-700 rounded-xl px-3 py-2 text-white text-sm focus:outline-none focus:border-gold-accent">
+                            <option value="ALL">Todos los Estados</option>
+                            <option value="Pendiente">Pendientes</option>
+                            <option value="Completado">Completados</option>
+                            <option value="Cancelado">Cancelados</option>
+                        </select>
+                    </div>
+                    <div class="relative w-full sm:w-64">
+                        <input type="text" id="search-agenda-input" onkeyup="renderBarberAgenda()" placeholder="Buscar cliente o barbero..." class="w-full bg-dark-900 border border-gray-700 rounded-xl pl-9 pr-4 py-2 text-white text-sm focus:outline-none focus:border-gold-accent">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-gray-500 text-xs"></i>
+                    </div>
+                </div>
+
+                <!-- Turnos Table -->
+                <div class="bg-dark-800 rounded-2xl border border-gray-800 overflow-hidden shadow-xl">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-sm text-gray-300">
+                            <thead class="bg-dark-900 text-xs uppercase text-gold-accent border-b border-gray-800">
+                                <tr>
+                                    <th class="py-4 px-6">Hora / Fecha</th>
+                                    <th class="py-4 px-6">Cliente</th>
+                                    <th class="py-4 px-6">Servicio</th>
+                                    <th class="py-4 px-6">Barbero</th>
+                                    <th class="py-4 px-6">Monto & Pago</th>
+                                    <th class="py-4 px-6">Estado</th>
+                                    <th class="py-4 px-6 text-right">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="barber-agenda-tbody" class="divide-y divide-gray-800/60">
+                                <!-- Dynamic rows -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BARBER TAB 2: BASE DE CLIENTES -->
+            <div id="barber-tab-clients" class="hidden space-y-6">
+                <div class="flex flex-col sm:flex-row justify-between items-center gap-4 bg-dark-800 p-4 rounded-xl border border-gray-800">
+                    <div class="relative w-full sm:w-72">
+                        <input type="text" id="search-client-input" onkeyup="renderBarberClients()" placeholder="Buscar por nombre o teléfono..." class="w-full bg-dark-900 border border-gray-700 rounded-xl pl-9 pr-4 py-2 text-white text-sm focus:outline-none focus:border-gold-accent">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-gray-500 text-xs"></i>
+                    </div>
+                    <button onclick="openNewClientModal()" class="w-full sm:w-auto bg-gold-accent hover:bg-gold-hover text-black font-bold px-4 py-2 rounded-xl text-sm transition flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-user-plus"></i>
+                        <span>Agregar Cliente</span>
+                    </button>
+                </div>
+
+                <div class="bg-dark-800 rounded-2xl border border-gray-800 overflow-hidden shadow-xl">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-sm text-gray-300">
+                            <thead class="bg-dark-900 text-xs uppercase text-gold-accent border-b border-gray-800">
+                                <tr>
+                                    <th class="py-4 px-6">Cliente</th>
+                                    <th class="py-4 px-6">Contacto</th>
+                                    <th class="py-4 px-6">Visitas Totales</th>
+                                    <th class="py-4 px-6">Gasto Acumulado</th>
+                                    <th class="py-4 px-6">Última Visita</th>
+                                </tr>
+                            </thead>
+                            <tbody id="barber-clients-tbody" class="divide-y divide-gray-800/60">
+                                <!-- Dynamic rows -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BARBER TAB 3: GESTIÓN DE SERVICIOS -->
+            <div id="barber-tab-services" class="hidden space-y-6">
+                <div class="flex justify-between items-center bg-dark-800 p-4 rounded-xl border border-gray-800">
+                    <div>
+                        <h3 class="heading-font text-lg font-bold text-white">Catálogo de Servicios</h3>
+                        <p class="text-xs text-gray-400">Edita precios o añade nuevas opciones para tus clientes</p>
+                    </div>
+                    <button onclick="openNewServiceModal()" class="bg-gold-accent hover:bg-gold-hover text-black font-bold px-4 py-2 rounded-xl text-sm transition flex items-center space-x-2">
+                        <i class="fa-solid fa-plus"></i>
+                        <span>Nuevo Servicio</span>
+                    </button>
+                </div>
+
+                <div id="barber-services-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Dynamic services editor -->
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-dark-800 border-t border-gray-800/80 py-6 mt-12">
+        <div class="max-w-7xl mx-auto px-4 text-center text-xs text-gray-500">
+            <p>© 2026 Legacy Barber Club. Sistema Integrado de Gestión de Barberías.</p>
+        </div>
+    </footer>
+
+    <!-- ========================================================================= -->
+    <!-- MODALES -->
+    <!-- ========================================================================= -->
+
+    <!-- MODAL: WALK-IN / COBRO RÁPIDO -->
+    <div id="modal-walkin" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-dark-800 border border-gold-accent/30 rounded-2xl max-w-lg w-full p-6 shadow-2xl relative space-y-6">
+            <div class="flex justify-between items-center border-b border-gray-700/50 pb-3">
+                <h3 class="heading-font text-xl font-bold text-white flex items-center space-x-2">
+                    <i class="fa-solid fa-cash-register text-gold-accent"></i>
+                    <span>Registrar Cobro Manual (Walk-In)</span>
+                </h3>
+                <button onclick="closeModal('modal-walkin')" class="text-gray-400 hover:text-white">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+
+            <form onsubmit="handleWalkInSubmit(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs text-gray-400 mb-1">Nombre del Cliente *</label>
+                    <input type="text" id="walkin-name" required placeholder="Ej. Cliente al paso" class="w-full bg-dark-900 border border-gray-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-gold-accent">
+                </div>
+                <div>
+                    <label class="block text-xs text-gray-400 mb-1">Teléfono (Opcional)</label>
+                    <input type="tel" id="walkin-phone" placeholder="Sin registrar" class="w-full bg-dark-900 border border-gray-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-gold-accent">
+                </div>
+                <div>
+                    <label class="block text-xs text-gray-400 mb-1">Servicio *</label>
+                    <select id="walkin-service" required onchange="calculateWalkInTotal()" class="w-full bg-dark-900 border border-gray-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-gold-accent">
+                        <!-- Dynamic options -->
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs text-gray-400 mb-1">Barbero que Atendió *</label>
+                    <select id="walkin-barber" required class="w-full bg-dark-900 border border-gray-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-gold-accent">
+                        <option value="Dylan Romero">Dylan Romero</option>
+                        <option value="Tomas Gallardo">Tomas Gallardo</option>
+                        <option value="Ezequiel Gallardo">Ezequiel Gallardo</option>
+                        <option value="Leandro Maidana">Leandro Maidana</option>
+                    </select>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs text-gray-400 mb-1">Método de Pago *</label>
+                        <select id="walkin-payment" required class="w-full bg-dark-900 border border-gray-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-gold-accent">
+                            <option value="Efectivo">Efectivo</option>
+                            <option value="Transferencia">Transferencia MP</option>
+                            <option value="Tarjeta">Tarjeta Débito/Crédito</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs text-gray-400 mb-1">Monto Cobrado ($)</label>
+                        <input type="number" id="walkin-amount" required class="w-full bg-dark-900 border border-gray-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-gold-accent font-bold text-gold-accent">
+                    </div>
+                </div>
+
+                <div class="pt-4 flex justify-end space-x-3">
+                    <button type="button" onclick="closeModal('modal-walkin')" class="px-4 py-2 bg-dark-700 text-gray-300 rounded-xl text-sm font-semibold hover:bg-dark-600">Cancelar</button>
+                    <button type="submit" class="px-6 py-2 bg-gold-accent hover:bg-gold-hover text-black rounded-xl text-sm font-bold transition shadow-lg shadow-gold-accent/20">Registrar y Cobrar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: AGREGAR CLIENTE -->
+    <div id="modal-client" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-dark-800 border border-gold-accent/30 rounded-2xl max-w-md w-full p-6 shadow-2xl relative space-y-6">
+            <div class="flex justify-between items-center border-b border-gray-700/50 pb-3">
+                <h3 class="heading-font text-xl font-bold text-white flex items-center space-x-2">
+                    <i class="fa-solid fa-user-plus text-gold-accent"></i>
+                    <span>Nuevo Cliente</span>
+                </h3>
+                <button onclick="closeModal('modal-client')" class="text-gray-400 hover:text-white">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+
+            <form onsubmit="handleSaveClient(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs text-gray-400 mb-1">Nombre Completo *</label>
+                    <input type="text" id="newclient-name" required class="w-full bg-dark-900 border border-gray-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-gold-accent">
+                </div>
+                <div>
+                    <label class="block text-xs text-gray-400 mb-1">Teléfono / WhatsApp *</label>
+                    <input type="tel" id="newclient-phone" required class="w-full bg-dark-900 border border-gray-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-gold-accent">
+                </div>
+                <div>
+                    <label class="block text-xs text-gray-400 mb-1">Email</label>
+                    <input type="email" id="newclient-email" class="w-full bg-dark-900 border border-gray-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-gold-accent">
+                </div>
+
+                <div class="pt-4 flex justify-end space-x-3">
+                    <button type="button" onclick="closeModal('modal-client')" class="px-4 py-2 bg-dark-700 text-gray-300 rounded-xl text-sm font-semibold hover:bg-dark-600">Cancelar</button>
+                    <button type="submit" class="px-6 py-2 bg-gold-accent hover:bg-gold-hover text-black rounded-xl text-sm font-bold transition">Guardar Cliente</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: AGREGAR / EDITAR SERVICIO -->
+    <div id="modal-service" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-dark-800 border border-gold-accent/30 rounded-2xl max-w-md w-full p-6 shadow-2xl relative space-y-6">
+            <div class="flex justify-between items-center border-b border-gray-700/50 pb-3">
+                <h3 id="modal-service-title" class="heading-font text-xl font-bold text-white flex items-center space-x-2">
+                    <i class="fa-solid fa-scissors text-gold-accent"></i>
+                    <span>Gestión de Servicio</span>
+                </h3>
+                <button onclick="closeModal('modal-service')" class="text-gray-400 hover:text-white">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+
+            <form onsubmit="handleSaveService(event)" class="space-y-4">
+                <input type="hidden" id="service-id">
+                <div>
+                    <label class="block text-xs text-gray-400 mb-1">Nombre del Servicio *</label>
+                    <input type="text" id="service-name" required class="w-full bg-dark-900 border border-gray-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-gold-accent">
+                </div>
+                <div>
+                    <label class="block text-xs text-gray-400 mb-1">Descripción Breve</label>
+                    <input type="text" id="service-desc" class="w-full bg-dark-900 border border-gray-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-gold-accent">
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs text-gray-400 mb-1">Precio ($) *</label>
+                        <input type="number" id="service-price" required step="0.5" class="w-full bg-dark-900 border border-gray-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-gold-accent">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-gray-400 mb-1">Duración (Mins) *</label>
+                        <input type="number" id="service-duration" required class="w-full bg-dark-900 border border-gray-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-gold-accent">
+                    </div>
+                </div>
+
+                <div class="pt-4 flex justify-end space-x-3">
+                    <button type="button" onclick="closeModal('modal-service')" class="px-4 py-2 bg-dark-700 text-gray-300 rounded-xl text-sm font-semibold hover:bg-dark-600">Cancelar</button>
+                    <button type="submit" class="px-6 py-2 bg-gold-accent hover:bg-gold-hover text-black rounded-xl text-sm font-bold transition">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: COMPLETAR TURNO Y COBRAR -->
+    <div id="modal-checkout" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-dark-800 border border-gold-accent/30 rounded-2xl max-w-md w-full p-6 shadow-2xl relative space-y-6">
+            <div class="flex justify-between items-center border-b border-gray-700/50 pb-3">
+                <h3 class="heading-font text-xl font-bold text-white flex items-center space-x-2">
+                    <i class="fa-solid fa-check-circle text-emerald-400"></i>
+                    <span>Completar y Cobrar Turno</span>
+                </h3>
+                <button onclick="closeModal('modal-checkout')" class="text-gray-400 hover:text-white">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+
+            <form onsubmit="handleCheckoutSubmit(event)" class="space-y-4">
+                <input type="hidden" id="checkout-appointment-id">
+                <div class="bg-dark-900 p-4 rounded-xl border border-gray-700 space-y-1">
+                    <p id="checkout-client-name" class="text-sm font-bold text-white">Cliente</p>
+                    <p id="checkout-service-info" class="text-xs text-gold-accent">Servicio</p>
+                </div>
+
+                <div>
+                    <label class="block text-xs text-gray-400 mb-1">Método de Pago *</label>
+                    <select id="checkout-payment-method" required class="w-full bg-dark-900 border border-gray-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-gold-accent">
+                        <option value="Efectivo">Efectivo</option>
+                        <option value="Transferencia">Transferencia MP</option>
+                        <option value="Tarjeta">Tarjeta Débito/Crédito</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs text-gray-400 mb-1">Monto Final Cobrado ($)</label>
+                    <input type="number" id="checkout-amount" required class="w-full bg-dark-900 border border-gray-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-gold-accent font-bold text-gold-accent">
+                </div>
+
+                <div class="pt-4 flex justify-end space-x-3">
+                    <button type="button" onclick="closeModal('modal-checkout')" class="px-4 py-2 bg-dark-700 text-gray-300 rounded-xl text-sm font-semibold hover:bg-dark-600">Cancelar</button>
+                    <button type="submit" class="px-6 py-2 bg-emerald-500 hover:bg-emerald-600 text-black rounded-xl text-sm font-bold transition">Confirmar Cobro</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- JAVASCRIPT LOGIC -->
+    <!-- ========================================================================= -->
+    <script>
+        // Catálogo de Servicios Base
+        const DEFAULT_SERVICES = [
+            { id: 'srv-1', name: 'Corte de Pelo Elite', price: 15000, duration: 45, description: 'Corte personalizado con lavado, perfilado y peinado con cera mate.' },
+            { id: 'srv-2', name: 'Arreglo & Ritual de Barba', price: 10000, duration: 30, description: 'Toalla caliente, perfilado a navaja tradicional y aceites esenciales.' },
+            { id: 'srv-3', name: 'Combo Legacy (Pelo + Barba)', price: 22000, duration: 75, description: 'Servicio completo de corte, barba premium, lavado y exfoliación facial.' },
+            { id: 'srv-4', name: 'Perfilado de Cejas / Diseños', price: 5000, duration: 20, description: 'Definición precisa a navaja o tijera.' }
+        ];
+
+        // Estado Global
+        let currentRole = 'client';
+        let services = [];
+        let clients = [];
+        let appointments = [];
+        let paymentChartInstance = null;
+        let revenueChartInstance = null;
+
+        const API_BASE = '';
+
+        // --- API HELPERS ---
+        async function apiGet(endpoint) {
+            const res = await fetch(`${API_BASE}/api/${endpoint}`);
+            if (!res.ok) throw new Error(`Error fetching ${endpoint}`);
+            return res.json();
+        }
+
+        async function apiPost(endpoint, body) {
+            const res = await fetch(`${API_BASE}/api/${endpoint}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body)
+            });
+            if (!res.ok) throw new Error(`Error posting to ${endpoint}`);
+            return res.json();
+        }
+
+        async function apiPut(endpoint, body) {
+            const res = await fetch(`${API_BASE}/api/${endpoint}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body)
+            });
+            if (!res.ok) throw new Error(`Error putting to ${endpoint}`);
+            return res.json();
+        }
+
+        async function apiDelete(endpoint, body) {
+            const res = await fetch(`${API_BASE}/api/${endpoint}`, {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body)
+            });
+            if (!res.ok) throw new Error(`Error deleting from ${endpoint}`);
+            return res.json();
+        }
+
+        // --- INIT APP ---
+        window.onload = async function() {
+            try {
+                await loadInitialData();
+            } catch (err) {
+                console.error('Error loading data:', err);
+                showToast('Error', 'No se pudieron cargar los datos del servidor');
+            }
+
+            const today = new Date().toISOString().split('T')[0];
+            const bookDateEl = document.getElementById('book-date');
+            const filterDateEl = document.getElementById('filter-agenda-date');
+            if (bookDateEl) bookDateEl.value = today;
+            if (filterDateEl) filterDateEl.value = today;
+
+            switchRole('client');
+        };
+
+        // --- DATA STORAGE LOGIC ---
+        async function loadInitialData() {
+            try {
+                const [servicesData, clientsData, appointmentsData] = await Promise.all([
+                    apiGet('services'),
+                    apiGet('clients'),
+                    apiGet('appointments')
+                ]);
+                services = servicesData.length ? servicesData : DEFAULT_SERVICES;
+                clients = clientsData || [];
+                appointments = appointmentsData || [];
+            } catch (err) {
+                console.error(err);
+                // Fallback a localStorage si falla
+                const storedServices = localStorage.getItem('barber_services');
+                services = storedServices ? JSON.parse(storedServices) : DEFAULT_SERVICES;
+                const storedClients = localStorage.getItem('barber_clients');
+                clients = storedClients ? JSON.parse(storedClients) : [];
+                const storedAppointments = localStorage.getItem('barber_appointments');
+                appointments = storedAppointments ? JSON.parse(storedAppointments) : [];
+            }
+        }
+
+        // --- ROLE SWITCHING ---
+        function switchRole(role) {
+            currentRole = role;
+            const clientBtn = document.getElementById('btn-role-client');
+            const barberBtn = document.getElementById('btn-role-barber');
+            const clientView = document.getElementById('view-client');
+            const barberView = document.getElementById('view-barber');
+
+            if (role === 'client') {
+                clientBtn.className = "px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-bold bg-gold-accent text-black shadow-lg shadow-gold-accent/20 flex items-center space-x-2";
+                barberBtn.className = "px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold text-gray-400 hover:text-white flex items-center space-x-2";
+                clientView.classList.remove('hidden');
+                barberView.classList.add('hidden');
+                renderClientServices();
+                populateServiceOptions();
+            } else {
+                barberBtn.className = "px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-bold bg-gold-accent text-black shadow-lg shadow-gold-accent/20 flex items-center space-x-2";
+                clientBtn.className = "px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold text-gray-400 hover:text-white flex items-center space-x-2";
+                clientView.classList.add('hidden');
+                barberView.classList.remove('hidden');
+                renderBarberDashboard();
+            }
+        }
+
+        // --- CLIENT SIDE FUNCTIONS ---
+        function switchClientTab(tab) {
+            const bookingTab = document.getElementById('client-tab-booking');
+            const myAppointmentsTab = document.getElementById('client-tab-my-appointments');
+            const btnBooking = document.getElementById('tab-btn-booking');
+            const btnMyAppointments = document.getElementById('tab-btn-my-appointments');
+
+            if (tab === 'booking') {
+                bookingTab.classList.remove('hidden');
+                myAppointmentsTab.classList.add('hidden');
+                btnBooking.className = "px-6 py-3 font-semibold text-sm border-b-2 border-gold-accent text-gold-accent flex items-center space-x-2";
+                btnMyAppointments.className = "px-6 py-3 font-semibold text-sm border-b-2 border-transparent text-gray-400 hover:text-white flex items-center space-x-2";
+            } else {
+                bookingTab.classList.add('hidden');
+                myAppointmentsTab.classList.remove('hidden');
+                btnMyAppointments.className = "px-6 py-3 font-semibold text-sm border-b-2 border-gold-accent text-gold-accent flex items-center space-x-2";
+                btnBooking.className = "px-6 py-3 font-semibold text-sm border-b-2 border-transparent text-gray-400 hover:text-white flex items-center space-x-2";
+            }
+        }
+
+        function renderClientServices() {
+            const container = document.getElementById('client-services-grid');
+            container.innerHTML = services.map(srv => `
+                <div class="bg-dark-800 rounded-2xl p-6 border border-gray-800 hover:border-gold-accent/50 transition duration-300 flex flex-col justify-between group shadow-lg">
+                    <div>
+                        <div class="flex justify-between items-start mb-3">
+                            <h4 class="heading-font text-lg font-bold text-white group-hover:text-gold-accent transition">${srv.name}</h4>
+                            <span class="text-xs font-semibold px-2.5 py-1 bg-dark-900 text-gold-accent rounded-full border border-gold-accent/20">${srv.duration} min</span>
+                        </div>
+                        <p class="text-gray-400 text-xs mb-4 leading-relaxed">${srv.description || 'Sin descripción'}</p>
+                    </div>
+                    <div class="pt-4 border-t border-gray-700/50 flex justify-between items-center">
+                        <span class="text-2xl font-bold text-white">$${srv.price.toLocaleString('es-AR')}</span>
+                        <button onclick="selectServiceForBooking('${srv.id}')" class="bg-gold-accent/10 hover:bg-gold-accent text-gold-accent hover:text-black font-semibold px-4 py-2 rounded-xl text-xs transition border border-gold-accent/30 flex items-center space-x-1">
+                            <span>Agendar</span>
+                            <i class="fa-solid fa-chevron-right text-[10px]"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function populateServiceOptions() {
+            const selectBooking = document.getElementById('book-service');
+            const selectWalkin = document.getElementById('walkin-service');
+
+            const optionsHTML = services.map(srv => `<option value="${srv.id}">${srv.name} ($${srv.price.toLocaleString('es-AR')})</option>`).join('');
+            selectBooking.innerHTML = optionsHTML;
+            selectWalkin.innerHTML = optionsHTML;
+
+            updateBookingSummary();
+            calculateWalkInTotal();
+        }
+
+        function selectServiceForBooking(serviceId) {
+            document.getElementById('book-service').value = serviceId;
+            updateBookingSummary();
+            scrollToBooking();
+        }
+
+        function scrollToBooking() {
+            switchClientTab('booking');
+            document.getElementById('booking-form-card').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function updateBookingSummary() {
+            const serviceId = document.getElementById('book-service').value;
+            const selected = services.find(s => s.id === serviceId);
+            if (selected) {
+                document.getElementById('summary-price').innerText = `$${selected.price.toLocaleString('es-AR')}`;
+            }
+        }
+
+        function handleBookAppointment(e) {
+            e.preventDefault();
+            const name = document.getElementById('book-name').value.trim();
+            const phone = document.getElementById('book-phone').value.trim();
+            const email = document.getElementById('book-email').value.trim();
+            const serviceId = document.getElementById('book-service').value;
+            const barber = document.getElementById('book-barber').value;
+            const date = document.getElementById('book-date').value;
+            const time = document.getElementById('book-time').value;
+
+            const service = services.find(s => s.id === serviceId);
+
+            let existingClient = clients.find(c => c.phone === phone);
+            if (!existingClient) {
+                existingClient = {
+                    id: 'cli-' + Date.now(),
+                    name: name,
+                    phone: phone,
+                    email: email,
+                    visits: 0,
+                    spent: 0,
+                    lastVisit: 'Sin visitas aún'
+                };
+                clients.push(existingClient);
+            }
+
+            const newAppointment = {
+                id: 'apt-' + Date.now(),
+                clientName: name,
+                clientPhone: phone,
+                serviceId: service.id,
+                serviceName: service.name,
+                barber: barber,
+                date: date,
+                time: time,
+                price: service.price,
+                status: 'Pendiente',
+                paymentMethod: null
+            };
+
+            appointments.push(newAppointment);
+            try {
+                await apiPost('appointments', newAppointment);
+            } catch (err) {
+                console.error('Error saving appointment:', err);
+            }
+            try {
+                if (!existingClient.visits && existingClient.id.startsWith('cli-') && !existingClient._saved) {
+                    await apiPost('clients', existingClient);
+                    existingClient._saved = true;
+                }
+            } catch (err) {
+                console.error('Error saving client:', err);
+            }
+
+            showToast('Reserva Confirmada', `Tu cita para el ${date} a las ${time} hs fue agendada exitosamente.`);
+            
+            document.getElementById('client-search-phone').value = phone;
+            switchClientTab('my-appointments');
+            renderClientAppointments();
+
+            document.getElementById('appointment-form').reset();
+            updateBookingSummary();
+        }
+
+        function renderClientAppointments() {
+            const phone = document.getElementById('client-search-phone').value.trim();
+            const container = document.getElementById('client-appointments-list');
+
+            if (!phone) {
+                container.innerHTML = `
+                    <div class="col-span-2 text-center py-12 text-gray-500 bg-dark-800 rounded-2xl border border-gray-800">
+                        <i class="fa-solid fa-search text-3xl mb-2 text-gray-600"></i>
+                        <p class="text-sm">Ingresa tu número de teléfono arriba para buscar tus turnos agendados.</p>
+                    </div>`;
+                return;
+            }
+
+            const myApts = appointments.filter(a => a.clientPhone === phone);
+
+            if (myApts.length === 0) {
+                container.innerHTML = `
+                    <div class="col-span-2 text-center py-12 text-gray-500 bg-dark-800 rounded-2xl border border-gray-800">
+                        <p class="text-sm">No se encontraron citas vinculadas al número <span class="text-white font-bold">${phone}</span>.</p>
+                    </div>`;
+                return;
+            }
+
+            container.innerHTML = myApts.map(apt => {
+                let statusBadge = '';
+                if (apt.status === 'Pendiente') {
+                    statusBadge = `<span class="px-3 py-1 bg-amber-500/10 text-amber-400 border border-amber-500/20 rounded-full text-xs font-semibold">Pendiente</span>`;
+                } else if (apt.status === 'Completado') {
+                    statusBadge = `<span class="px-3 py-1 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-full text-xs font-semibold">Completado</span>`;
+                } else {
+                    statusBadge = `<span class="px-3 py-1 bg-rose-500/10 text-rose-400 border border-rose-500/20 rounded-full text-xs font-semibold">Cancelado</span>`;
+                }
+
+                return `
+                    <div class="bg-dark-800 rounded-2xl p-6 border border-gray-800 shadow-lg space-y-4">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <span class="text-xs text-gray-400">Servicio</span>
+                                <h4 class="font-bold text-white text-base">${apt.serviceName}</h4>
+                            </div>
+                            ${statusBadge}
+                        </div>
+                        <div class="grid grid-cols-2 gap-2 text-xs text-gray-300">
+                            <div><i class="fa-solid fa-calendar text-gold-accent mr-1"></i> ${apt.date}</div>
+                            <div><i class="fa-solid fa-clock text-gold-accent mr-1"></i> ${apt.time} hs</div>
+                            <div><i class="fa-solid fa-user-tie text-gold-accent mr-1"></i> ${apt.barber}</div>
+                            <div><i class="fa-solid fa-tag text-gold-accent mr-1"></i> $${apt.price.toLocaleString('es-AR')}</div>
+                        </div>
+                        ${apt.status === 'Pendiente' ? `
+                            <button onclick="cancelClientAppointment('${apt.id}')" class="w-full py-2 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/30 rounded-xl text-xs font-bold transition">
+                                Cancelar Cita
+                            </button>
+                        ` : ''}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function cancelClientAppointment(aptId) {
+            if (confirm('¿Estás seguro de cancelar esta cita?')) {
+                const apt = appointments.find(a => a.id === aptId);
+                if (apt) {
+                    apt.status = 'Cancelado';
+                    try {
+                        await apiPut('appointments', apt);
+                    } catch (err) {
+                        console.error('Error cancelling appointment:', err);
+                    }
+                    showToast('Cita Cancelada', 'El turno ha sido cancelado.');
+                    renderClientAppointments();
+                }
+            }
+        }
+
+        // --- BARBER ADMIN SIDE FUNCTIONS ---
+        function switchBarberTab(tab) {
+            const agenda = document.getElementById('barber-tab-agenda');
+            const clientsTab = document.getElementById('barber-tab-clients');
+            const servicesTab = document.getElementById('barber-tab-services');
+
+            const btnAgenda = document.getElementById('barber-tab-btn-agenda');
+            const btnClients = document.getElementById('barber-tab-btn-clients');
+            const btnServices = document.getElementById('barber-tab-btn-services');
+
+            agenda.classList.add('hidden');
+            clientsTab.classList.add('hidden');
+            servicesTab.classList.add('hidden');
+
+            btnAgenda.className = "px-6 py-3 font-semibold text-sm border-b-2 border-transparent text-gray-400 hover:text-white whitespace-nowrap flex items-center space-x-2";
+            btnClients.className = "px-6 py-3 font-semibold text-sm border-b-2 border-transparent text-gray-400 hover:text-white whitespace-nowrap flex items-center space-x-2";
+            btnServices.className = "px-6 py-3 font-semibold text-sm border-b-2 border-transparent text-gray-400 hover:text-white whitespace-nowrap flex items-center space-x-2";
+
+            if (tab === 'agenda') {
+                agenda.classList.remove('hidden');
+                btnAgenda.className = "px-6 py-3 font-semibold text-sm border-b-2 border-gold-accent text-gold-accent whitespace-nowrap flex items-center space-x-2";
+                renderBarberAgenda();
+            } else if (tab === 'clients') {
+                clientsTab.classList.remove('hidden');
+                btnClients.className = "px-6 py-3 font-semibold text-sm border-b-2 border-gold-accent text-gold-accent whitespace-nowrap flex items-center space-x-2";
+                renderBarberClients();
+            } else {
+                servicesTab.classList.remove('hidden');
+                btnServices.className = "px-6 py-3 font-semibold text-sm border-b-2 border-gold-accent text-gold-accent whitespace-nowrap flex items-center space-x-2";
+                renderBarberServices();
+            }
+        }
+
+        function renderBarberDashboard() {
+            const today = new Date().toISOString().split('T')[0];
+            const currentMonth = new Date().getMonth();
+            const currentYear = new Date().getFullYear();
+
+            const completedAppointments = appointments.filter(a => a.status === 'Completado');
+
+            const todayCompleted = completedAppointments.filter(a => a.date === today);
+            const dailyRev = todayCompleted.reduce((sum, a) => sum + (Number(a.price) || 0), 0);
+
+            const monthlyCompleted = completedAppointments.filter(a => {
+                const d = new Date(a.date);
+                return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
+            });
+            const monthlyRev = monthlyCompleted.reduce((sum, a) => sum + (Number(a.price) || 0), 0);
+
+            const pendingCount = appointments.filter(a => a.status === 'Pendiente').length;
+
+            document.getElementById('stat-daily-revenue').innerText = `$${dailyRev.toLocaleString('es-AR')}`;
+            document.getElementById('stat-daily-count').innerHTML = `<span class="text-emerald-400 font-bold">${todayCompleted.length}</span> servicios completados hoy`;
+
+            document.getElementById('stat-monthly-revenue').innerText = `$${monthlyRev.toLocaleString('es-AR')}`;
+            document.getElementById('stat-monthly-count').innerHTML = `<span class="text-gold-accent font-bold">${monthlyCompleted.length}</span> atenciones totales en el mes`;
+
+            document.getElementById('stat-total-clients').innerText = clients.length;
+            document.getElementById('stat-pending-appointments').innerText = pendingCount;
+
+            renderCharts(completedAppointments);
+            renderBarberAgenda();
+        }
+
+        function renderCharts(completedAppointments) {
+            const paymentCounts = { Efectivo: 0, Transferencia: 0, Tarjeta: 0 };
+            completedAppointments.forEach(a => {
+                if (a.paymentMethod && paymentCounts.hasOwnProperty(a.paymentMethod)) {
+                    paymentCounts[a.paymentMethod] += Number(a.price) || 0;
+                }
+            });
+
+            const breakdownContainer = document.getElementById('payment-breakdown-list');
+            breakdownContainer.innerHTML = `
+                <div class="flex justify-between items-center text-gray-300">
+                    <span class="flex items-center"><i class="fa-solid fa-circle text-emerald-400 text-[8px] mr-2"></i> Efectivo:</span>
+                    <span class="font-bold text-white">$${paymentCounts.Efectivo.toLocaleString('es-AR')}</span>
+                </div>
+                <div class="flex justify-between items-center text-gray-300">
+                    <span class="flex items-center"><i class="fa-solid fa-circle text-blue-400 text-[8px] mr-2"></i> Transferencia:</span>
+                    <span class="font-bold text-white">$${paymentCounts.Transferencia.toLocaleString('es-AR')}</span>
+                </div>
+                <div class="flex justify-between items-center text-gray-300">
+                    <span class="flex items-center"><i class="fa-solid fa-circle text-amber-400 text-[8px] mr-2"></i> Tarjeta:</span>
+                    <span class="font-bold text-white">$${paymentCounts.Tarjeta.toLocaleString('es-AR')}</span>
+                </div>
+            `;
+
+            const ctxPayment = document.getElementById('paymentMethodChart').getContext('2d');
+            if (paymentChartInstance) paymentChartInstance.destroy();
+
+            paymentChartInstance = new Chart(ctxPayment, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Efectivo', 'Transferencia', 'Tarjeta'],
+                    datasets: [{
+                        data: [paymentCounts.Efectivo, paymentCounts.Transferencia, paymentCounts.Tarjeta],
+                        backgroundColor: ['#10B981', '#60A5FA', '#FBBF24'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } }
+                }
+            });
+
+            const ctxRev = document.getElementById('revenueChart').getContext('2d');
+            if (revenueChartInstance) revenueChartInstance.destroy();
+
+            const last7Days = [];
+            const revenueData = [];
+
+            for (let i = 6; i >= 0; i--) {
+                const d = new Date();
+                d.setDate(d.getDate() - i);
+                const dateStr = d.toISOString().split('T')[0];
+                last7Days.push(d.toLocaleDateString('es-AR', { weekday: 'short', day: 'numeric' }));
+
+                const daySum = completedAppointments
+                    .filter(a => a.date === dateStr)
+                    .reduce((sum, a) => sum + (Number(a.price) || 0), 0);
+                revenueData.push(daySum);
+            }
+
+            revenueChartInstance = new Chart(ctxRev, {
+                type: 'line',
+                data: {
+                    labels: last7Days,
+                    datasets: [{
+                        label: 'Ingresos ($)',
+                        data: revenueData,
+                        borderColor: '#D4AF37',
+                        backgroundColor: 'rgba(212, 175, 55, 0.1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#9CA3AF' } },
+                        y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#9CA3AF' } }
+                    },
+                    plugins: { legend: { display: false } }
+                }
+            });
+        }
+
+        function renderBarberAgenda() {
+            const dateFilter = document.getElementById('filter-agenda-date').value;
+            const statusFilter = document.getElementById('filter-agenda-status').value;
+            const searchQuery = document.getElementById('search-agenda-input').value.toLowerCase();
+
+            let filtered = appointments;
+
+            if (dateFilter) {
+                filtered = filtered.filter(a => a.date === dateFilter);
+            }
+
+            if (statusFilter !== 'ALL') {
+                filtered = filtered.filter(a => a.status === statusFilter);
+            }
+
+            if (searchQuery) {
+                filtered = filtered.filter(a => a.clientName.toLowerCase().includes(searchQuery) || a.barber.toLowerCase().includes(searchQuery));
+            }
+
+            filtered.sort((a, b) => a.time.localeCompare(b.time));
+
+            const tbody = document.getElementById('barber-agenda-tbody');
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7" class="py-8 text-center text-gray-500">
+                            No hay turnos registrados que coincidan con el filtro.
+                        </td>
+                    </tr>`;
+                return;
+            }
+
+            tbody.innerHTML = filtered.map(apt => {
+                let statusBadge = '';
+                if (apt.status === 'Pendiente') {
+                    statusBadge = `<span class="px-2.5 py-1 bg-amber-500/10 text-amber-400 border border-amber-500/20 rounded-full text-xs font-semibold">Pendiente</span>`;
+                } else if (apt.status === 'Completado') {
+                    statusBadge = `<span class="px-2.5 py-1 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-full text-xs font-semibold">Completado</span>`;
+                } else {
+                    statusBadge = `<span class="px-2.5 py-1 bg-rose-500/10 text-rose-400 border border-rose-500/20 rounded-full text-xs font-semibold">Cancelado</span>`;
+                }
+
+                return `
+                    <tr class="hover:bg-dark-700/50 transition">
+                        <td class="py-4 px-6 font-semibold text-white">
+                            <div>${apt.time} hs</div>
+                            <div class="text-[10px] text-gray-400">${apt.date}</div>
+                        </td>
+                        <td class="py-4 px-6">
+                            <div class="font-bold text-white">${apt.clientName}</div>
+                            <div class="text-xs text-gray-400">${apt.clientPhone}</div>
+                        </td>
+                        <td class="py-4 px-6 text-gray-300">${apt.serviceName}</td>
+                        <td class="py-4 px-6 text-gray-300">${apt.barber}</td>
+                        <td class="py-4 px-6">
+                            <div class="font-bold text-gold-accent">$${apt.price.toLocaleString('es-AR')}</div>
+                            <div class="text-[10px] text-gray-400">${apt.paymentMethod || 'No abonado'}</div>
+                        </td>
+                        <td class="py-4 px-6">${statusBadge}</td>
+                        <td class="py-4 px-6 text-right space-x-2">
+                            ${apt.status === 'Pendiente' ? `
+                                <button onclick="openCheckoutModal('${apt.id}')" title="Marcar como Completado" class="p-2 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 rounded-lg transition">
+                                    <i class="fa-solid fa-check"></i>
+                                </button>
+                                <button onclick="changeAppointmentStatus('${apt.id}', 'Cancelado')" title="Cancelar Cita" class="p-2 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 rounded-lg transition">
+                                    <i class="fa-solid fa-xmark"></i>
+                                </button>
+                            ` : `
+                                <button onclick="deleteAppointment('${apt.id}')" title="Eliminar Registro" class="p-2 bg-gray-800 hover:bg-gray-700 text-gray-400 hover:text-white rounded-lg transition">
+                                    <i class="fa-solid fa-trash-can"></i>
+                                </button>
+                            `}
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function openCheckoutModal(aptId) {
+            const apt = appointments.find(a => a.id === aptId);
+            if (!apt) return;
+
+            document.getElementById('checkout-appointment-id').value = apt.id;
+            document.getElementById('checkout-client-name').innerText = `Cliente: ${apt.clientName}`;
+            document.getElementById('checkout-service-info').innerText = `Servicio: ${apt.serviceName} - Barbero: ${apt.barber}`;
+            document.getElementById('checkout-amount').value = apt.price;
+
+            openModal('modal-checkout');
+        }
+
+        function handleCheckoutSubmit(e) {
+            e.preventDefault();
+            const aptId = document.getElementById('checkout-appointment-id').value;
+            const paymentMethod = document.getElementById('checkout-payment-method').value;
+            const amount = Number(document.getElementById('checkout-amount').value);
+
+            const apt = appointments.find(a => a.id === aptId);
+            if (apt) {
+                apt.status = 'Completado';
+                apt.paymentMethod = paymentMethod;
+                apt.price = amount;
+
+                let client = clients.find(c => c.phone === apt.clientPhone);
+                if (client) {
+                    client.visits += 1;
+                    client.spent += amount;
+                    client.lastVisit = apt.date;
+                }
+
+                try {
+                    await apiPut('appointments', apt);
+                } catch (err) {
+                    console.error('Error updating appointment:', err);
+                }
+                try {
+                    if (client) {
+                        await apiPut('clients', client);
+                    }
+                } catch (err) {
+                    console.error('Error updating client:', err);
+                }
+                closeModal('modal-checkout');
+                showToast('Turno Completado', 'El pago fue registrado y la caja actualizada.');
+                renderBarberDashboard();
+            }
+        }
+
+        function changeAppointmentStatus(aptId, status) {
+            const apt = appointments.find(a => a.id === aptId);
+            if (apt) {
+                apt.status = status;
+                try {
+                    await apiPut('appointments', apt);
+                } catch (err) {
+                    console.error('Error updating appointment:', err);
+                }
+                showToast('Estado Actualizado', `La cita fue marcada como ${status}.`);
+                renderBarberDashboard();
+            }
+        }
+
+        function deleteAppointment(aptId) {
+            if (confirm('¿Eliminar esta cita del historial?')) {
+                appointments = appointments.filter(a => a.id !== aptId);
+                try {
+                    await apiDelete('appointments', { id: aptId });
+                } catch (err) {
+                    console.error('Error deleting appointment:', err);
+                }
+                renderBarberDashboard();
+            }
+        }
+
+        // --- CLIENT MANAGEMENT ---
+        function renderBarberClients() {
+            const query = document.getElementById('search-client-input').value.toLowerCase();
+            const tbody = document.getElementById('barber-clients-tbody');
+
+            let filtered = clients;
+            if (query) {
+                filtered = filtered.filter(c => c.name.toLowerCase().includes(query) || c.phone.includes(query));
+            }
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="py-8 text-center text-gray-500">No hay clientes registrados en la base de datos.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = filtered.map(c => `
+                <tr class="hover:bg-dark-700/50 transition">
+                    <td class="py-4 px-6 font-bold text-white">${c.name}</td>
+                    <td class="py-4 px-6 text-gray-300">
+                        <div><i class="fa-solid fa-phone text-xs text-gold-accent mr-1"></i> ${c.phone}</div>
+                        <div class="text-xs text-gray-500">${c.email || 'Sin Email'}</div>
+                    </td>
+                    <td class="py-4 px-6 font-semibold text-white">${c.visits} servicios</td>
+                    <td class="py-4 px-6 font-bold text-gold-accent">$${c.spent.toLocaleString('es-AR')}</td>
+                    <td class="py-4 px-6 text-xs text-gray-400">${c.lastVisit || 'Sin visitas'}</td>
+                </tr>
+            `).join('');
+        }
+
+        function openNewClientModal() {
+            openModal('modal-client');
+        }
+
+        function handleSaveClient(e) {
+            e.preventDefault();
+            const name = document.getElementById('newclient-name').value.trim();
+            const phone = document.getElementById('newclient-phone').value.trim();
+            const email = document.getElementById('newclient-email').value.trim();
+
+            const existing = clients.find(c => c.phone === phone);
+            if (existing) {
+                alert('Ya existe un cliente con este número de teléfono.');
+                return;
+            }
+
+            const newClient = {
+                id: 'cli-' + Date.now(),
+                name: name,
+                phone: phone,
+                email: email,
+                visits: 0,
+                spent: 0,
+                lastVisit: 'Sin visitas aún'
+            };
+            clients.push(newClient);
+
+            try {
+                await apiPost('clients', newClient);
+                newClient._saved = true;
+            } catch (err) {
+                console.error('Error saving client:', err);
+            }
+            closeModal('modal-client');
+            showToast('Cliente Agregado', 'Nuevo cliente registrado en el sistema.');
+            renderBarberClients();
+            document.getElementById('stat-total-clients').innerText = clients.length;
+        }
+
+        // --- SERVICES MANAGEMENT ---
+        function renderBarberServices() {
+            const container = document.getElementById('barber-services-grid');
+            container.innerHTML = services.map(srv => `
+                <div class="bg-dark-800 rounded-2xl p-6 border border-gray-800 flex flex-col justify-between shadow-lg">
+                    <div>
+                        <div class="flex justify-between items-start mb-2">
+                            <h4 class="heading-font text-lg font-bold text-white">${srv.name}</h4>
+                            <span class="text-xs font-semibold px-2.5 py-1 bg-dark-900 text-gold-accent rounded-full border border-gold-accent/20">${srv.duration} min</span>
+                        </div>
+                        <p class="text-gray-400 text-xs mb-4">${srv.description || 'Sin descripción'}</p>
+                    </div>
+                    <div class="pt-4 border-t border-gray-700/50 flex justify-between items-center">
+                        <span class="text-2xl font-bold text-gold-accent">$${srv.price.toLocaleString('es-AR')}</span>
+                        <div class="space-x-2">
+                            <button onclick="editService('${srv.id}')" class="px-3 py-1.5 bg-dark-700 hover:bg-dark-600 text-white rounded-lg text-xs font-semibold transition">
+                                <i class="fa-solid fa-pen mr-1"></i> Editar
+                            </button>
+                            <button onclick="deleteService('${srv.id}')" class="px-3 py-1.5 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 rounded-lg text-xs font-semibold transition">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function openNewServiceModal() {
+            document.getElementById('service-id').value = '';
+            document.getElementById('service-name').value = '';
+            document.getElementById('service-desc').value = '';
+            document.getElementById('service-price').value = '';
+            document.getElementById('service-duration').value = '30';
+            document.getElementById('modal-service-title').innerText = 'Nuevo Servicio';
+            openModal('modal-service');
+        }
+
+        function editService(srvId) {
+            const srv = services.find(s => s.id === srvId);
+            if (!srv) return;
+
+            document.getElementById('service-id').value = srv.id;
+            document.getElementById('service-name').value = srv.name;
+            document.getElementById('service-desc').value = srv.description || '';
+            document.getElementById('service-price').value = srv.price;
+            document.getElementById('service-duration').value = srv.duration;
+            document.getElementById('modal-service-title').innerText = 'Editar Servicio';
+            openModal('modal-service');
+        }
+
+        function handleSaveService(e) {
+            e.preventDefault();
+            const id = document.getElementById('service-id').value;
+            const name = document.getElementById('service-name').value.trim();
+            const desc = document.getElementById('service-desc').value.trim();
+            const price = Number(document.getElementById('service-price').value);
+            const duration = Number(document.getElementById('service-duration').value);
+
+            if (id) {
+                const srv = services.find(s => s.id === id);
+                if (srv) {
+                    srv.name = name;
+                    srv.description = desc;
+                    srv.price = price;
+                    srv.duration = duration;
+                    try {
+                        await apiPut('services', srv);
+                    } catch (err) {
+                        console.error('Error updating service:', err);
+                    }
+                }
+            } else {
+                const newSrv = {
+                    id: 'srv-' + Date.now(),
+                    name: name,
+                    description: desc,
+                    price: price,
+                    duration: duration
+                };
+                services.push(newSrv);
+                try {
+                    await apiPost('services', newSrv);
+                } catch (err) {
+                    console.error('Error creating service:', err);
+                }
+            }
+
+            closeModal('modal-service');
+            populateServiceOptions();
+            renderBarberServices();
+            renderClientServices();
+            showToast('Servicio Guardado', 'El catálogo fue actualizado.');
+        }
+
+        function deleteService(srvId) {
+            if (confirm('¿Deseas eliminar este servicio del catálogo?')) {
+                services = services.filter(s => s.id !== srvId);
+                try {
+                    await apiDelete('services', { id: srvId });
+                } catch (err) {
+                    console.error('Error deleting service:', err);
+                }
+                populateServiceOptions();
+                renderBarberServices();
+                renderClientServices();
+            }
+        }
+
+        // --- WALK-IN / COBRO RÁPIDO ---
+        function openWalkInModal() {
+            openModal('modal-walkin');
+        }
+
+        function calculateWalkInTotal() {
+            const srvId = document.getElementById('walkin-service').value;
+            const srv = services.find(s => s.id === srvId);
+            if (srv) {
+                document.getElementById('walkin-amount').value = srv.price;
+            }
+        }
+
+        function handleWalkInSubmit(e) {
+            e.preventDefault();
+            const name = document.getElementById('walkin-name').value.trim();
+            const phone = document.getElementById('walkin-phone').value.trim() || 'Sin registrar';
+            const srvId = document.getElementById('walkin-service').value;
+            const barber = document.getElementById('walkin-barber').value;
+            const paymentMethod = document.getElementById('walkin-payment').value;
+            const amount = Number(document.getElementById('walkin-amount').value);
+
+            const service = services.find(s => s.id === srvId);
+            const today = new Date().toISOString().split('T')[0];
+            const nowTime = new Date().toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' });
+
+            const newApt = {
+                id: 'apt-' + Date.now(),
+                clientName: name,
+                clientPhone: phone,
+                serviceId: service ? service.id : '',
+                serviceName: service ? service.name : 'Atención Directa',
+                barber: barber,
+                date: today,
+                time: nowTime,
+                price: amount,
+                status: 'Completado',
+                paymentMethod: paymentMethod
+            };
+
+            appointments.push(newApt);
+
+            let clientToSave = null;
+            if (phone !== 'Sin registrar') {
+                let client = clients.find(c => c.phone === phone);
+                if (client) {
+                    client.visits += 1;
+                    client.spent += amount;
+                    client.lastVisit = today;
+                    clientToSave = client;
+                } else {
+                    clientToSave = {
+                        id: 'cli-' + Date.now(),
+                        name: name,
+                        phone: phone,
+                        email: '',
+                        visits: 1,
+                        spent: amount,
+                        lastVisit: today
+                    };
+                    clients.push(clientToSave);
+                }
+            }
+
+            try {
+                await apiPost('appointments', newApt);
+            } catch (err) {
+                console.error('Error saving walk-in:', err);
+            }
+            try {
+                if (clientToSave) {
+                    if (clientToSave.visits === 1 && !clientToSave._saved) {
+                        await apiPost('clients', clientToSave);
+                        clientToSave._saved = true;
+                    } else {
+                        await apiPut('clients', clientToSave);
+                    }
+                }
+            } catch (err) {
+                console.error('Error saving client:', err);
+            }
+            closeModal('modal-walkin');
+            showToast('Cobro Registrado', 'Atención guardada e ingresada en la caja.');
+            renderBarberDashboard();
+        }
+
+        // --- EXPORT REPORT ---
+        function exportReport() {
+            const today = new Date().toISOString().split('T')[0];
+            const todayCompleted = appointments.filter(a => a.status === 'Completado' && a.date === today);
+            const totalRev = todayCompleted.reduce((sum, a) => sum + Number(a.price), 0);
+
+            let content = `RESUMEN DE CAJA DIARIA - LEGACY BARBER\nFecha: ${today}\n\n`;
+            content += `Total Servicios Completados: ${todayCompleted.length}\n`;
+            content += `Recaudación Total: $${totalRev.toLocaleString('es-AR')}\n\n`;
+            content += `DESGLOSE DE SERVICIOS:\n`;
+            
+            if (todayCompleted.length === 0) {
+                content += `No hay ventas registradas el día de hoy.\n`;
+            } else {
+                todayCompleted.forEach((a, i) => {
+                    content += `${i + 1}. [${a.time} hs] ${a.clientName} - ${a.serviceName} (${a.barber}) -> $${a.price} [${a.paymentMethod}]\n`;
+                });
+            }
+
+            const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `Caja_Barberia_${today}.txt`;
+            link.click();
+        }
+
+        // --- UTILS & MODALS ---
+        function openModal(id) {
+            document.getElementById(id).classList.remove('hidden');
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.add('hidden');
+        }
+
+        function showToast(title, msg) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-title').innerText = title;
+            document.getElementById('toast-msg').innerText = msg;
+
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+
+            setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3500);
+        }
+    </script>
+</body>
+</html>
