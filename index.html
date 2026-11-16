@@ -1,3 +1,12 @@
+
+<script>
+(function(){
+  window.addEventListener = window.addEventListener || function(){};
+  window.removeEventListener = window.removeEventListener || function(){};
+  document.addEventListener = document.addEventListener || function(){};
+  document.removeEventListener = document.removeEventListener || function(){};
+})();
+</script>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -164,7 +173,70 @@
                         <p class="text-gray-400 text-sm">Selecciona el tratamiento perfecto para tu estilo</p>
                     </div>
                     <div id="client-services-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        <!-- Rendered dynamically -->
+                        <div class="bg-dark-800 rounded-2xl p-6 border border-gray-800 hover:border-gold-accent/50 transition duration-300 flex flex-col justify-between group shadow-lg">
+                            <div>
+                                <div class="flex justify-between items-start mb-3">
+                                    <h4 class="heading-font text-lg font-bold text-white group-hover:text-gold-accent transition">Corte de Pelo Elite</h4>
+                                    <span class="text-xs font-semibold px-2.5 py-1 bg-dark-900 text-gold-accent rounded-full border border-gold-accent/20">45 min</span>
+                                </div>
+                                <p class="text-gray-400 text-xs mb-4 leading-relaxed">Corte personalizado con lavado, perfilado y peinado con cera mate.</p>
+                            </div>
+                            <div class="pt-4 border-t border-gray-700/50 flex justify-between items-center">
+                                <span class="text-2xl font-bold text-white">$15.000</span>
+                                <button onclick="selectServiceForBooking('srv-1')" class="bg-gold-accent/10 hover:bg-gold-accent text-gold-accent hover:text-black font-semibold px-4 py-2 rounded-xl text-xs transition border border-gold-accent/30 flex items-center space-x-1">
+                                    <span>Agendar</span>
+                                    <i class="fa-solid fa-chevron-right text-[10px]"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="bg-dark-800 rounded-2xl p-6 border border-gray-800 hover:border-gold-accent/50 transition duration-300 flex flex-col justify-between group shadow-lg">
+                            <div>
+                                <div class="flex justify-between items-start mb-3">
+                                    <h4 class="heading-font text-lg font-bold text-white group-hover:text-gold-accent transition">Arreglo & Ritual de Barba</h4>
+                                    <span class="text-xs font-semibold px-2.5 py-1 bg-dark-900 text-gold-accent rounded-full border border-gold-accent/20">30 min</span>
+                                </div>
+                                <p class="text-gray-400 text-xs mb-4 leading-relaxed">Toalla caliente, perfilado a navaja tradicional y aceites esenciales.</p>
+                            </div>
+                            <div class="pt-4 border-t border-gray-700/50 flex justify-between items-center">
+                                <span class="text-2xl font-bold text-white">$10.000</span>
+                                <button onclick="selectServiceForBooking('srv-2')" class="bg-gold-accent/10 hover:bg-gold-accent text-gold-accent hover:text-black font-semibold px-4 py-2 rounded-xl text-xs transition border border-gold-accent/30 flex items-center space-x-1">
+                                    <span>Agendar</span>
+                                    <i class="fa-solid fa-chevron-right text-[10px]"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="bg-dark-800 rounded-2xl p-6 border border-gray-800 hover:border-gold-accent/50 transition duration-300 flex flex-col justify-between group shadow-lg">
+                            <div>
+                                <div class="flex justify-between items-start mb-3">
+                                    <h4 class="heading-font text-lg font-bold text-white group-hover:text-gold-accent transition">Combo Legacy (Pelo + Barba)</h4>
+                                    <span class="text-xs font-semibold px-2.5 py-1 bg-dark-900 text-gold-accent rounded-full border border-gold-accent/20">75 min</span>
+                                </div>
+                                <p class="text-gray-400 text-xs mb-4 leading-relaxed">Servicio completo de corte, barba premium, lavado y exfoliación facial.</p>
+                            </div>
+                            <div class="pt-4 border-t border-gray-700/50 flex justify-between items-center">
+                                <span class="text-2xl font-bold text-white">$22.000</span>
+                                <button onclick="selectServiceForBooking('srv-3')" class="bg-gold-accent/10 hover:bg-gold-accent text-gold-accent hover:text-black font-semibold px-4 py-2 rounded-xl text-xs transition border border-gold-accent/30 flex items-center space-x-1">
+                                    <span>Agendar</span>
+                                    <i class="fa-solid fa-chevron-right text-[10px]"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="bg-dark-800 rounded-2xl p-6 border border-gray-800 hover:border-gold-accent/50 transition duration-300 flex flex-col justify-between group shadow-lg">
+                            <div>
+                                <div class="flex justify-between items-start mb-3">
+                                    <h4 class="heading-font text-lg font-bold text-white group-hover:text-gold-accent transition">Perfilado de Cejas / Diseños</h4>
+                                    <span class="text-xs font-semibold px-2.5 py-1 bg-dark-900 text-gold-accent rounded-full border border-gold-accent/20">20 min</span>
+                                </div>
+                                <p class="text-gray-400 text-xs mb-4 leading-relaxed">Definición precisa a navaja o tijera.</p>
+                            </div>
+                            <div class="pt-4 border-t border-gray-700/50 flex justify-between items-center">
+                                <span class="text-2xl font-bold text-white">$5.000</span>
+                                <button onclick="selectServiceForBooking('srv-4')" class="bg-gold-accent/10 hover:bg-gold-accent text-gold-accent hover:text-black font-semibold px-4 py-2 rounded-xl text-xs transition border border-gold-accent/30 flex items-center space-x-1">
+                                    <span>Agendar</span>
+                                    <i class="fa-solid fa-chevron-right text-[10px]"></i>
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -203,7 +275,10 @@
                                 <div>
                                     <label class="block text-xs text-gray-400 mb-1">Servicio Seleccionado *</label>
                                     <select id="book-service" required onchange="updateBookingSummary()" class="w-full bg-dark-900 border border-gray-700 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-gold-accent transition">
-                                        <!-- Rendered dynamically -->
+                                        <option value="srv-1">Corte de Pelo Elite ($15.000)</option>
+                                        <option value="srv-2">Arreglo & Ritual de Barba ($10.000)</option>
+                                        <option value="srv-3">Combo Legacy (Pelo + Barba) ($22.000)</option>
+                                        <option value="srv-4">Perfilado de Cejas / Diseños ($5.000)</option>
                                     </select>
                                 </div>
                                 <div>
@@ -536,7 +611,10 @@
                 <div>
                     <label class="block text-xs text-gray-400 mb-1">Servicio *</label>
                     <select id="walkin-service" required onchange="calculateWalkInTotal()" class="w-full bg-dark-900 border border-gray-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-gold-accent">
-                        <!-- Dynamic options -->
+                        <option value="srv-1">Corte de Pelo Elite ($15.000)</option>
+                        <option value="srv-2">Arreglo & Ritual de Barba ($10.000)</option>
+                        <option value="srv-3">Combo Legacy (Pelo + Barba) ($22.000)</option>
+                        <option value="srv-4">Perfilado de Cejas / Diseños ($5.000)</option>
                     </select>
                 </div>
                 <div>
@@ -693,7 +771,7 @@
     <!-- ========================================================================= -->
     <!-- JAVASCRIPT LOGIC -->
     <!-- ========================================================================= -->
-    <script>
+    <script>(async function(){
         // Catálogo de Servicios Base
         const DEFAULT_SERVICES = [
             { id: 'srv-1', name: 'Corte de Pelo Elite', price: 15000, duration: 45, description: 'Corte personalizado con lavado, perfilado y peinado con cera mate.' },
@@ -704,7 +782,7 @@
 
         // Estado Global
         let currentRole = 'client';
-        let services = [];
+        var services = window.services || [];
         let clients = [];
         let appointments = [];
         let paymentChartInstance = null;
@@ -750,44 +828,63 @@
         }
 
         // --- INIT APP ---
-        window.onload = async function() {
+        window.onload = function() {
             try {
-                await loadInitialData();
+                loadInitialData().then(function(){
+                    if (typeof renderClientServices === 'function') renderClientServices();
+                    if (typeof populateServiceOptions === 'function') populateServiceOptions();
+                }).catch(function(err){
+                    console.error('Error loading data:', err);
+                    if (typeof showToast === 'function') showToast('Error', 'No se pudieron cargar los datos del servidor');
+                });
             } catch (err) {
                 console.error('Error loading data:', err);
-                showToast('Error', 'No se pudieron cargar los datos del servidor');
             }
 
-            const today = new Date().toISOString().split('T')[0];
-            const bookDateEl = document.getElementById('book-date');
-            const filterDateEl = document.getElementById('filter-agenda-date');
+            var today = new Date().toISOString().split('T')[0];
+            var bookDateEl = document.getElementById('book-date');
+            var filterDateEl = document.getElementById('filter-agenda-date');
             if (bookDateEl) bookDateEl.value = today;
             if (filterDateEl) filterDateEl.value = today;
 
-            switchRole('client');
+            if (typeof switchRole === 'function') switchRole('client');
+            setTimeout(function() {
+                try {
+                    if (typeof populateServiceOptions === 'function') populateServiceOptions();
+                    if (typeof renderClientServices === 'function') renderClientServices();
+                    console.log('FORCE_RENDER', services.length);
+                } catch(e) { console.error(e); }
+            }, 300);
         };
 
         // --- DATA STORAGE LOGIC ---
-        async function loadInitialData() {
-            try {
-                const [servicesData, clientsData, appointmentsData] = await Promise.all([
-                    apiGet('services'),
-                    apiGet('clients'),
-                    apiGet('appointments')
-                ]);
-                services = servicesData.length ? servicesData : DEFAULT_SERVICES;
+        function loadInitialData() {
+            var defaults = [
+                { id: 'srv-1', name: 'Corte de Pelo Elite', price: 15000, duration: 45, description: 'Corte personalizado con lavado, perfilado y peinado con cera mate.' },
+                { id: 'srv-2', name: 'Arreglo & Ritual de Barba', price: 10000, duration: 30, description: 'Toalla caliente, perfilado a navaja tradicional y aceites esenciales.' },
+                { id: 'srv-3', name: 'Combo Legacy (Pelo + Barba)', price: 22000, duration: 75, description: 'Servicio completo de corte, barba premium, lavado y exfoliación facial.' },
+                { id: 'srv-4', name: 'Perfilado de Cejas / Diseños', price: 5000, duration: 20, description: 'Definición precisa a navaja o tijera.' }
+            ];
+            return Promise.all([
+                fetch('/api/services').then(function(r){ return r.json(); }).catch(function(){ return []; }),
+                fetch('/api/clients').then(function(r){ return r.json(); }).catch(function(){ return []; }),
+                fetch('/api/appointments').then(function(r){ return r.json(); }).catch(function(){ return []; })
+            ]).then(function(results){
+                var servicesData = results[0];
+                var clientsData = results[1];
+                var appointmentsData = results[2];
+                window.services = (Array.isArray(servicesData) && servicesData.length > 0) ? servicesData : defaults.slice();
+                services = window.services;
                 clients = clientsData || [];
                 appointments = appointmentsData || [];
-            } catch (err) {
+                console.log('Loaded:', services.length, 'services');
+            }).catch(function(err){
                 console.error(err);
-                // Fallback a localStorage si falla
-                const storedServices = localStorage.getItem('barber_services');
-                services = storedServices ? JSON.parse(storedServices) : DEFAULT_SERVICES;
-                const storedClients = localStorage.getItem('barber_clients');
-                clients = storedClients ? JSON.parse(storedClients) : [];
-                const storedAppointments = localStorage.getItem('barber_appointments');
-                appointments = storedAppointments ? JSON.parse(storedAppointments) : [];
-            }
+                window.services = defaults.slice();
+                services = window.services;
+                clients = [];
+                appointments = [];
+            });
         }
 
         // --- ROLE SWITCHING ---
@@ -836,17 +933,30 @@
 
         function renderClientServices() {
             const container = document.getElementById('client-services-grid');
+            if (!container) return;
+            if (!Array.isArray(services) || services.length === 0) {
+                try {
+                    const data = await fetch('/api/services').then(r => r.json()).catch(() => []);
+                    if (Array.isArray(data) && data.length > 0) {
+                        services = data;
+                    } else {
+                        services = JSON.parse(JSON.stringify(DEFAULT_SERVICES));
+                    }
+                } catch (e) {
+                    services = JSON.parse(JSON.stringify(DEFAULT_SERVICES));
+                }
+            }
             container.innerHTML = services.map(srv => `
                 <div class="bg-dark-800 rounded-2xl p-6 border border-gray-800 hover:border-gold-accent/50 transition duration-300 flex flex-col justify-between group shadow-lg">
                     <div>
                         <div class="flex justify-between items-start mb-3">
-                            <h4 class="heading-font text-lg font-bold text-white group-hover:text-gold-accent transition">${srv.name}</h4>
-                            <span class="text-xs font-semibold px-2.5 py-1 bg-dark-900 text-gold-accent rounded-full border border-gold-accent/20">${srv.duration} min</span>
+                            <h4 class="heading-font text-lg font-bold text-white group-hover:text-gold-accent transition">${srv.name || ''}</h4>
+                            <span class="text-xs font-semibold px-2.5 py-1 bg-dark-900 text-gold-accent rounded-full border border-gold-accent/20">${srv.duration || 30} min</span>
                         </div>
                         <p class="text-gray-400 text-xs mb-4 leading-relaxed">${srv.description || 'Sin descripción'}</p>
                     </div>
                     <div class="pt-4 border-t border-gray-700/50 flex justify-between items-center">
-                        <span class="text-2xl font-bold text-white">$${srv.price.toLocaleString('es-AR')}</span>
+                        <span class="text-2xl font-bold text-white">${Number(srv.price || 0).toLocaleString('es-AR')}</span>
                         <button onclick="selectServiceForBooking('${srv.id}')" class="bg-gold-accent/10 hover:bg-gold-accent text-gold-accent hover:text-black font-semibold px-4 py-2 rounded-xl text-xs transition border border-gold-accent/30 flex items-center space-x-1">
                             <span>Agendar</span>
                             <i class="fa-solid fa-chevron-right text-[10px]"></i>
@@ -857,15 +967,157 @@
         }
 
         function populateServiceOptions() {
-            const selectBooking = document.getElementById('book-service');
-            const selectWalkin = document.getElementById('walkin-service');
+            var selectBooking = document.getElementById('book-service');
+            var selectWalkin = document.getElementById('walkin-service');
+            var defaults = [
+                { id: 'srv-1', name: 'Corte de Pelo Elite', price: 15000, duration: 45, description: 'Corte personalizado con lavado, perfilado y peinado con cera mate.' },
+                { id: 'srv-2', name: 'Arreglo & Ritual de Barba', price: 10000, duration: 30, description: 'Toalla caliente, perfilado a navaja tradicional y aceites esenciales.' },
+                { id: 'srv-3', name: 'Combo Legacy (Pelo + Barba)', price: 22000, duration: 75, description: 'Servicio completo de corte, barba premium, lavado y exfoliación facial.' },
+                { id: 'srv-4', name: 'Perfilado de Cejas / Diseños', price: 5000, duration: 20, description: 'Definición precisa a navaja o tijera.' }
+            ];
+            if (!Array.isArray(services) || services.length === 0) {
+                services = defaults.slice();
+            }
+            var optionsHTML = services.map(function(srv){
+                return '<option value="' + srv.id + '">' + (srv.name||'') +  </script>;
+            }
+    <script>
+        (function(){
+            try {
+                var defaults = [
+                    { id: 'srv-1', name: 'Corte de Pelo Elite', price: 15000, duration: 45, description: 'Corte personalizado con lavado, perfilado y peinado con cera mate.' },
+                    { id: 'srv-2', name: 'Arreglo & Ritual de Barba', price: 10000, duration: 30, description: 'Toalla caliente, perfilado a navaja tradicional y aceites esenciales.' },
+                    { id: 'srv-3', name: 'Combo Legacy (Pelo + Barba)', price: 22000, duration: 75, description: 'Servicio completo de corte, barba premium, lavado y exfoliación facial.' },
+                    { id: 'srv-4', name: 'Perfilado de Cejas / Diseños', price: 5000, duration: 20, description: 'Definición precisa a navaja o tijera.' }
+                ];
+                if(!window.services || !Array.isArray(window.services) || window.services.length === 0) {
+                    window.services = defaults.slice();
+                }
+                fetch('/api/services')
+                    .then(function(r){ return r.json(); })
+                    .then(function(data){
+                        if(Array.isArray(data) && data.length > 0) {
+                            window.services = data;
+                        } else {
+                            window.services = defaults.slice();
+                        }
+                        if(typeof renderClientServices === 'function') renderClientServices();
+                        if(typeof populateServiceOptions === 'function') populateServiceOptions();
+                        console.log('DIRECT_RENDER', window.services.length);
+                    })
+                    .catch(function(){
+                        window.services = defaults.slice();
+                        if(typeof renderClientServices === 'function') renderClientServices();
+                        if(typeof populateServiceOptions === 'function') populateServiceOptions();
+                        console.log('DIRECT_RENDER_FALLBACK', window.services.length);
+                    });
+            } catch(e) { console.error(e); }
+        })();
+    </script>
 
-            const optionsHTML = services.map(srv => `<option value="${srv.id}">${srv.name} ($${srv.price.toLocaleString('es-AR')})</option>`).join('');
-            selectBooking.innerHTML = optionsHTML;
-            selectWalkin.innerHTML = optionsHTML;
+<script>
+</script>
 
+
+<script>
+window.switchRole = function(r){ if(typeof switchRole==='function'){switchRole(r);} };
+window.switchClientTab = function(t){ if(typeof switchClientTab==='function'){switchClientTab(t);} };
+window.scrollToBooking = function(){ if(typeof scrollToBooking==='function'){scrollToBooking();} };
+window.selectServiceForBooking = function(id){ if(typeof selectServiceForBooking==='function'){selectServiceForBooking(id);} };
+window.renderClientServices = function(){ if(typeof renderClientServices==='function'){return renderClientServices();} };
+window.populateServiceOptions = function(){ if(typeof populateServiceOptions==='function'){populateServiceOptions();} };
+window.openModal = function(id){ if(typeof openModal==='function'){openModal(id);} };
+window.closeModal = function(id){ if(typeof closeModal==='function'){closeModal(id);} };
+window.showToast = function(t,m){ if(typeof showToast==='function'){showToast(t,m);} };
+</script>
+
+<script>
+function switchRole(r){ try { if(window._switchRole) window._switchRole(r); } catch(e){} }
+function switchClientTab(t){ try { if(window._switchClientTab) window._switchClientTab(t); } catch(e){} }
+function scrollToBooking(){ try { if(window._scrollToBooking) window._scrollToBooking(); } catch(e){} }
+function selectServiceForBooking(id){ try { if(window._selectServiceForBooking) window._selectServiceForBooking(id); } catch(e){} }
+function renderClientServices(){ try { if(window._renderClientServices) return window._renderClientServices(); } catch(e){} }
+function populateServiceOptions(){ try { if(window._populateServiceOptions) window._populateServiceOptions(); } catch(e){} }
+</script>
+
+<script>
+window._switchRole = switchRole;
+window._switchClientTab = switchClientTab;
+window._scrollToBooking = scrollToBooking;
+window._selectServiceForBooking = selectServiceForBooking;
+window._renderClientServices = renderClientServices;
+window._populateServiceOptions = populateServiceOptions;
+</script>
+
+<script>
+window.switchRole = window.switchRole || function(r){
+  try {
+    var clientBtn = document.getElementById('btn-role-client');
+    var barberBtn = document.getElementById('btn-role-barber');
+    var clientView = document.getElementById('view-client');
+    var barberView = document.getElementById('view-barber');
+    if(r === 'client'){
+      if(clientBtn) clientBtn.className = "px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-bold bg-gold-accent text-black shadow-lg shadow-gold-accent/20 flex items-center space-x-2";
+      if(barberBtn) barberBtn.className = "px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold text-gray-400 hover:text-white flex items-center space-x-2";
+      if(clientView) clientView.classList.remove('hidden');
+      if(barberView) barberView.classList.add('hidden');
+    } else {
+      if(barberBtn) barberBtn.className = "px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-bold bg-gold-accent text-black shadow-lg shadow-gold-accent/20 flex items-center space-x-2";
+      if(clientBtn) clientBtn.className = "px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold text-gray-400 hover:text-white flex items-center space-x-2";
+      if(clientView) clientView.classList.add('hidden');
+      if(barberView) barberView.classList.remove('hidden');
+    }
+  } catch(e){}
+};
+window.switchClientTab = window.switchClientTab || function(tab){
+  try {
+    var bookingTab = document.getElementById('client-tab-booking');
+    var myAppointmentsTab = document.getElementById('client-tab-my-appointments');
+    var btnBooking = document.getElementById('tab-btn-booking');
+    var btnMyAppointments = document.getElementById('tab-btn-my-appointments');
+    if(tab === 'booking'){
+      if(bookingTab) bookingTab.classList.remove('hidden');
+      if(myAppointmentsTab) myAppointmentsTab.classList.add('hidden');
+      if(btnBooking) btnBooking.className = "px-6 py-3 font-semibold text-sm border-b-2 border-gold-accent text-gold-accent flex items-center space-x-2";
+      if(btnMyAppointments) btnMyAppointments.className = "px-6 py-3 font-semibold text-sm border-b-2 border-transparent text-gray-400 hover:text-white flex items-center space-x-2";
+    } else {
+      if(bookingTab) bookingTab.classList.add('hidden');
+      if(myAppointmentsTab) myAppointmentsTab.classList.remove('hidden');
+      if(btnMyAppointments) btnMyAppointments.className = "px-6 py-3 font-semibold text-sm border-b-2 border-gold-accent text-gold-accent flex items-center space-x-2";
+      if(btnBooking) btnBooking.className = "px-6 py-3 font-semibold text-sm border-b-2 border-transparent text-gray-400 hover:text-white flex items-center space-x-2";
+    }
+  } catch(e){}
+};
+window.scrollToBooking = window.scrollToBooking || function(){
+  try {
+    if(typeof window.switchClientTab === 'function') window.switchClientTab('booking');
+    var card = document.getElementById('booking-form-card');
+    if(card) card.scrollIntoView({behavior:'smooth'});
+  } catch(e){}
+};
+window.selectServiceForBooking = window.selectServiceForBooking || function(id){
+  try {
+    var sel = document.getElementById('book-service');
+    if(sel) sel.value = id;
+    if(typeof window.updateBookingSummary === 'function') window.updateBookingSummary();
+    if(typeof window.scrollToBooking === 'function') window.scrollToBooking();
+  } catch(e){}
+};
+</script>
+</body>
+</html>
+</html> + Number(srv.price||0).toLocaleString('es-AR') + ')</option>';
+            }).join('');
+            if (selectBooking) {
+                selectBooking.innerHTML = optionsHTML;
+                if (!selectBooking.value && services.length > 0) selectBooking.value = services[0].id;
+            }
+            if (selectWalkin) {
+                selectWalkin.innerHTML = optionsHTML;
+                if (!selectWalkin.value && services.length > 0) selectWalkin.value = services[0].id;
+            }
             updateBookingSummary();
-            calculateWalkInTotal();
+            if (typeof calculateWalkInTotal === 'function') calculateWalkInTotal();
         }
 
         function selectServiceForBooking(serviceId) {
@@ -883,7 +1135,7 @@
             const serviceId = document.getElementById('book-service').value;
             const selected = services.find(s => s.id === serviceId);
             if (selected) {
-                document.getElementById('summary-price').innerText = `$${selected.price.toLocaleString('es-AR')}`;
+                document.getElementById('summary-price').innerText = `${selected.price.toLocaleString('es-AR')}`;
             }
         }
 
@@ -998,7 +1250,7 @@
                             <div><i class="fa-solid fa-calendar text-gold-accent mr-1"></i> ${apt.date}</div>
                             <div><i class="fa-solid fa-clock text-gold-accent mr-1"></i> ${apt.time} hs</div>
                             <div><i class="fa-solid fa-user-tie text-gold-accent mr-1"></i> ${apt.barber}</div>
-                            <div><i class="fa-solid fa-tag text-gold-accent mr-1"></i> $${apt.price.toLocaleString('es-AR')}</div>
+                            <div><i class="fa-solid fa-tag text-gold-accent mr-1"></i> ${apt.price.toLocaleString('es-AR')}</div>
                         </div>
                         ${apt.status === 'Pendiente' ? `
                             <button onclick="cancelClientAppointment('${apt.id}')" class="w-full py-2 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/30 rounded-xl text-xs font-bold transition">
@@ -1077,10 +1329,10 @@
 
             const pendingCount = appointments.filter(a => a.status === 'Pendiente').length;
 
-            document.getElementById('stat-daily-revenue').innerText = `$${dailyRev.toLocaleString('es-AR')}`;
+            document.getElementById('stat-daily-revenue').innerText = `${dailyRev.toLocaleString('es-AR')}`;
             document.getElementById('stat-daily-count').innerHTML = `<span class="text-emerald-400 font-bold">${todayCompleted.length}</span> servicios completados hoy`;
 
-            document.getElementById('stat-monthly-revenue').innerText = `$${monthlyRev.toLocaleString('es-AR')}`;
+            document.getElementById('stat-monthly-revenue').innerText = `${monthlyRev.toLocaleString('es-AR')}`;
             document.getElementById('stat-monthly-count').innerHTML = `<span class="text-gold-accent font-bold">${monthlyCompleted.length}</span> atenciones totales en el mes`;
 
             document.getElementById('stat-total-clients').innerText = clients.length;
@@ -1102,15 +1354,15 @@
             breakdownContainer.innerHTML = `
                 <div class="flex justify-between items-center text-gray-300">
                     <span class="flex items-center"><i class="fa-solid fa-circle text-emerald-400 text-[8px] mr-2"></i> Efectivo:</span>
-                    <span class="font-bold text-white">$${paymentCounts.Efectivo.toLocaleString('es-AR')}</span>
+                    <span class="font-bold text-white">${paymentCounts.Efectivo.toLocaleString('es-AR')}</span>
                 </div>
                 <div class="flex justify-between items-center text-gray-300">
                     <span class="flex items-center"><i class="fa-solid fa-circle text-blue-400 text-[8px] mr-2"></i> Transferencia:</span>
-                    <span class="font-bold text-white">$${paymentCounts.Transferencia.toLocaleString('es-AR')}</span>
+                    <span class="font-bold text-white">${paymentCounts.Transferencia.toLocaleString('es-AR')}</span>
                 </div>
                 <div class="flex justify-between items-center text-gray-300">
                     <span class="flex items-center"><i class="fa-solid fa-circle text-amber-400 text-[8px] mr-2"></i> Tarjeta:</span>
-                    <span class="font-bold text-white">$${paymentCounts.Tarjeta.toLocaleString('es-AR')}</span>
+                    <span class="font-bold text-white">${paymentCounts.Tarjeta.toLocaleString('es-AR')}</span>
                 </div>
             `;
 
@@ -1234,7 +1486,7 @@
                         <td class="py-4 px-6 text-gray-300">${apt.serviceName}</td>
                         <td class="py-4 px-6 text-gray-300">${apt.barber}</td>
                         <td class="py-4 px-6">
-                            <div class="font-bold text-gold-accent">$${apt.price.toLocaleString('es-AR')}</div>
+                            <div class="font-bold text-gold-accent">${apt.price.toLocaleString('es-AR')}</div>
                             <div class="text-[10px] text-gray-400">${apt.paymentMethod || 'No abonado'}</div>
                         </td>
                         <td class="py-4 px-6">${statusBadge}</td>
@@ -1306,7 +1558,7 @@
             }
         }
 
-        function changeAppointmentStatus(aptId, status) {
+        async function changeAppointmentStatus(aptId, status) {
             const apt = appointments.find(a => a.id === aptId);
             if (apt) {
                 apt.status = status;
@@ -1320,7 +1572,7 @@
             }
         }
 
-        function deleteAppointment(aptId) {
+        async function deleteAppointment(aptId) {
             if (confirm('¿Eliminar esta cita del historial?')) {
                 appointments = appointments.filter(a => a.id !== aptId);
                 try {
@@ -1355,7 +1607,7 @@
                         <div class="text-xs text-gray-500">${c.email || 'Sin Email'}</div>
                     </td>
                     <td class="py-4 px-6 font-semibold text-white">${c.visits} servicios</td>
-                    <td class="py-4 px-6 font-bold text-gold-accent">$${c.spent.toLocaleString('es-AR')}</td>
+                    <td class="py-4 px-6 font-bold text-gold-accent">${c.spent.toLocaleString('es-AR')}</td>
                     <td class="py-4 px-6 text-xs text-gray-400">${c.lastVisit || 'Sin visitas'}</td>
                 </tr>
             `).join('');
@@ -1365,7 +1617,7 @@
             openModal('modal-client');
         }
 
-        function handleSaveClient(e) {
+        async function handleSaveClient(e) {
             e.preventDefault();
             const name = document.getElementById('newclient-name').value.trim();
             const phone = document.getElementById('newclient-phone').value.trim();
@@ -1413,7 +1665,7 @@
                         <p class="text-gray-400 text-xs mb-4">${srv.description || 'Sin descripción'}</p>
                     </div>
                     <div class="pt-4 border-t border-gray-700/50 flex justify-between items-center">
-                        <span class="text-2xl font-bold text-gold-accent">$${srv.price.toLocaleString('es-AR')}</span>
+                        <span class="text-2xl font-bold text-gold-accent">${srv.price.toLocaleString('es-AR')}</span>
                         <div class="space-x-2">
                             <button onclick="editService('${srv.id}')" class="px-3 py-1.5 bg-dark-700 hover:bg-dark-600 text-white rounded-lg text-xs font-semibold transition">
                                 <i class="fa-solid fa-pen mr-1"></i> Editar
@@ -1450,7 +1702,7 @@
             openModal('modal-service');
         }
 
-        function handleSaveService(e) {
+        async function handleSaveService(e) {
             e.preventDefault();
             const id = document.getElementById('service-id').value;
             const name = document.getElementById('service-name').value.trim();
@@ -1494,7 +1746,7 @@
             showToast('Servicio Guardado', 'El catálogo fue actualizado.');
         }
 
-        function deleteService(srvId) {
+        async function deleteService(srvId) {
             if (confirm('¿Deseas eliminar este servicio del catálogo?')) {
                 services = services.filter(s => s.id !== srvId);
                 try {
@@ -1521,7 +1773,7 @@
             }
         }
 
-        function handleWalkInSubmit(e) {
+        async function handleWalkInSubmit(e) {
             e.preventDefault();
             const name = document.getElementById('walkin-name').value.trim();
             const phone = document.getElementById('walkin-phone').value.trim() || 'Sin registrar';
@@ -1602,14 +1854,14 @@
 
             let content = `RESUMEN DE CAJA DIARIA - LEGACY BARBER\nFecha: ${today}\n\n`;
             content += `Total Servicios Completados: ${todayCompleted.length}\n`;
-            content += `Recaudación Total: $${totalRev.toLocaleString('es-AR')}\n\n`;
+            content += `Recaudación Total: ${totalRev.toLocaleString('es-AR')}\n\n`;
             content += `DESGLOSE DE SERVICIOS:\n`;
             
             if (todayCompleted.length === 0) {
                 content += `No hay ventas registradas el día de hoy.\n`;
             } else {
                 todayCompleted.forEach((a, i) => {
-                    content += `${i + 1}. [${a.time} hs] ${a.clientName} - ${a.serviceName} (${a.barber}) -> $${a.price} [${a.paymentMethod}]\n`;
+                    content += `${i + 1}. [${a.time} hs] ${a.clientName} - ${a.serviceName} (${a.barber}) -> ${a.price} [${a.paymentMethod}]\n`;
                 });
             }
 
@@ -1642,6 +1894,43 @@
                 toast.classList.add('translate-y-20', 'opacity-0');
             }, 3500);
         }
+    })();</script>
+
+    <script>
+        (function(){
+            try {
+                var defaults = [
+                    { id: 'srv-1', name: 'Corte de Pelo Elite', price: 15000, duration: 45, description: 'Corte personalizado con lavado, perfilado y peinado con cera mate.' },
+                    { id: 'srv-2', name: 'Arreglo & Ritual de Barba', price: 10000, duration: 30, description: 'Toalla caliente, perfilado a navaja tradicional y aceites esenciales.' },
+                    { id: 'srv-3', name: 'Combo Legacy (Pelo + Barba)', price: 22000, duration: 75, description: 'Servicio completo de corte, barba premium, lavado y exfoliación facial.' },
+                    { id: 'srv-4', name: 'Perfilado de Cejas / Diseños', price: 5000, duration: 20, description: 'Definición precisa a navaja o tijera.' }
+                ];
+                if(!window.services || !Array.isArray(window.services) || window.services.length === 0) {
+                    window.services = defaults.slice();
+                }
+                fetch('/api/services')
+                    .then(function(r){ return r.json(); })
+                    .then(function(data){
+                        if(Array.isArray(data) && data.length > 0) {
+                            window.services = data;
+                        } else {
+                            window.services = defaults.slice();
+                        }
+                        if(typeof renderClientServices === 'function') renderClientServices();
+                        if(typeof populateServiceOptions === 'function') populateServiceOptions();
+                        console.log('DIRECT_RENDER', window.services.length);
+                    })
+                    .catch(function(){
+                        window.services = defaults.slice();
+                        if(typeof renderClientServices === 'function') renderClientServices();
+                        if(typeof populateServiceOptions === 'function') populateServiceOptions();
+                        console.log('DIRECT_RENDER_FALLBACK', window.services.length);
+                    });
+            } catch(e) { console.error(e); }
+        })();
     </script>
+
+<script>
+</script>
 </body>
 </html>
